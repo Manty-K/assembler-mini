@@ -1,0 +1,5 @@
+*.lst
+*.o
+*.s
+*.tab.*
+lex.yy.c
