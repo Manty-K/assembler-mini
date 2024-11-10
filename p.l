@@ -1,5 +1,6 @@
 %{
 #include "p.tab.h"
+#include "utils.h"
 char *label;
 char *value;
 %}
@@ -14,11 +15,12 @@ RES	"res"[bwtqd]
 ;.*				{}
 {SECTION}{SPACE}".data"		{return SEC_DATA;}
 {SECTION}{SPACE}".bss"		{return SEC_BSS;}
-"db"				{return DB_TYPE;}
-"dw"				{return DW_TYPE;}
-"dd"				{return DD_TYPE;}
-"dq"				{return DQ_TYPE;}
-"dt"				{return DT_TYPE;}
+d[bwdq]				{
+						yylval.i = sizeFromChar(yytext[1]);
+						return D_TYPE;
+					}	
+
+
 "resb"				{return RESB_TYPE;}
 "resw"				{return RESW_TYPE;}
 "resd"				{return RESD_TYPE;}

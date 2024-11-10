@@ -9,4 +9,6 @@ enum ByteType{
 
 void parsenum(long  n,enum ByteType bt);
 
-void parsestr(char * s ,enum ByteType bt);
+int parsestr(char * s ,enum ByteType bt);
+
+int sizeFromChar(int c);

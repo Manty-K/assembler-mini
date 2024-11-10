@@ -48,13 +48,14 @@ void parsenum(long  n,enum ByteType bt){
 	}	
 
 }
-void parsestr(char * s ,enum ByteType bt ){
-
+int parsestr(char * s ,enum ByteType bt ){
+	int count = 0;
 	int i = 0;	
 	while( *(s+i) != 0){
 
 		printf("%02X",*(s+i));
 		i++;
+		count++;
 	}
 
 	int r = strlen(s) %  bt;
@@ -62,8 +63,29 @@ void parsestr(char * s ,enum ByteType bt ){
 	if(bt > 1 && r != 0){
 		for (i = 0 ; i< bt -r; i++){
 			printf("00");
+			count++;
 		}
 	}
-	//printf("\n");
+	return count;
+}
+
+int sizeFromChar(int c){
+
+	switch (c)
+	{
+	case 'b':
+		return 1;
+	case 'w':
+		return 2;
+	case 'd':
+		return 4;
+	case 'q':
+		return 8;
+	
+	default:
+		fprintf(stderr,"Invalid type : %c",c);
+		return -1;
+	}
+
 }
 
