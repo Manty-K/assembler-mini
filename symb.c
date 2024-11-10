@@ -80,6 +80,7 @@ void addLabel(char *label, long location, char section)
         e->label = malloc(sizeof(label));
         strcpy(e->label, label);
         e->location = location;
+        e->section = section;
         NODE *n = malloc(sizeof(NODE));
         n->entry = e;
         n->left = n->right = NULL;
@@ -92,4 +93,22 @@ void addLabel(char *label, long location, char section)
             parent->right = n;
         }
     }
+}
+
+void inorder(NODE *node)
+{
+
+    if (node == NULL)
+    {
+        return;
+    }
+    printf("%ld\t%s\t%c\n", node->entry->location, node->entry->label, node->entry->section);
+    inorder(node->left);
+    inorder(node->right);
+}
+void displaySymbolTable()
+{
+    puts("Loc\tLbl\tSec");
+    puts("-------------------");
+    inorder(root);
 }
