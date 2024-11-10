@@ -1,5 +1,7 @@
 %{
 #include<stdio.h>
+#include<string.h>
+#include "utils.h"
 void yyerror(const char * e);
 int yylex();
 void newline();
@@ -10,9 +12,17 @@ long locb = 0;
 long loct = 0;
 %}
 
-%token SEC_DATA SEC_BSS SEC_TEXT LABEL VALUE DB_TYPE DW_TYPE DD_TYPE DQ_TYPE DT_TYPE NEWLINE RESB_TYPE RESW_TYPE RESD_TYPE RESQ_TYPE REST_TYPE STRING COMMA COMMENT
+%token SEC_DATA SEC_BSS SEC_TEXT LABEL DB_TYPE DW_TYPE DD_TYPE DQ_TYPE DT_TYPE NEWLINE RESB_TYPE RESW_TYPE RESD_TYPE RESQ_TYPE REST_TYPE COMMA COMMENT
+%token <i> VALUE
+%token <s> STRING
 
 %start lines
+
+%union{
+	int i;
+	char *s;
+}
+
 
 %%
 lines: line lines
@@ -27,11 +37,20 @@ data_lines: NEWLINE {newline();} data_lines
 	|data_line NEWLINE {newline();} data_lines
 	|
 	;
-data_line: LABEL DB_TYPE VALUE {printf("dd");}
+data_line: LABEL DB_TYPE {printLocation(locd);}values
 	|LABEL DW_TYPE VALUE {printf("dw");}
 	|LABEL DD_TYPE VALUE {printf("dd");}
-	| LABEL DQ_TYPE VALUE {printf("dq");}
+	|LABEL DQ_TYPE VALUE {printf("dq");}
 	; 
+
+values: val
+	| val COMMA values
+	;
+
+val: VALUE {parsenum($1,BYTE);locd += BYTE;}
+	| STRING {parsestr($1,BYTE); locd += strlen($1);}
+	;
+
 
 bss_lines: NEWLINE {newline();} bss_lines
 	|bss_line NEWLINE {newline();} bss_lines

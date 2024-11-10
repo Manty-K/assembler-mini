@@ -26,14 +26,11 @@ RES	"res"[bwtqd]
 "rest"				{return REST_TYPE;}
 ,				{return COMMA;}
 {ALPNUM}			{label = strdup(yytext); return LABEL;}
-  /*\"([^\"]*)\"			{value = strdup(yytext); return STRING;} */
 \"([^\"]*)\"			{
-				
-				strncpy(value, yytext + 1,yyleng-2); // strdup without the leading quote
-    				 // remove the trailing quote
+					yylval.s = strndup(yytext+1,yyleng-2);
     				return STRING; 
 				}
-{NUMBER}			{yylval = atoi(yytext); return VALUE;}
+{NUMBER}			{yylval.i = atoi(yytext); return VALUE;}
 \n		{return NEWLINE;}
 {SPACE}		{}
 .		{}
