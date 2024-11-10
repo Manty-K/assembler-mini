@@ -14,6 +14,7 @@ RES	"res"[bwtqd]
 ;.*				{}
 {SECTION}{SPACE}".data"		{return SEC_DATA;}
 {SECTION}{SPACE}".bss"		{return SEC_BSS;}
+{SECTION}{SPACE}".text"		{return SEC_TEXT;}
 d[bwdq]				{
 						yylval.i = sizeFromChar(yytext[1]);
 						return D_TYPE;

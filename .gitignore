@@ -3,3 +3,4 @@
 *.s
 *.tab.*
 lex.yy.c
+*.output

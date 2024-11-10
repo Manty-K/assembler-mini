@@ -13,7 +13,7 @@ long loct = 0;
 int size;
 %}
 
-%token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA COMMENT
+%token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA 
 %token <i> VALUE D_TYPE B_TYPE
 %token <s> STRING LABEL
 
@@ -31,11 +31,12 @@ lines: line lines
 	|;
 
 line : SEC_BSS {printf("SECTION BSS");} NEWLINE {newline();} bss_lines
-  	| SEC_DATA {printf("SECTION DATA");} NEWLINE {newline();} data_lines 
+  	| SEC_DATA {printf("SECTION DATA");} NEWLINE {newline();} data_lines
+	| SEC_TEXT {printf("SECTION TEXT");}
 	;
 
-data_lines: NEWLINE {newline();} data_lines
-	|data_line NEWLINE {newline();} data_lines
+data_lines: data_line NEWLINE {newline();} data_lines
+	| NEWLINE {newline();} data_lines
 	|
 	;
 data_line: LABEL D_TYPE {printLocation(locd); size = $2;}values
@@ -50,8 +51,8 @@ val: VALUE {parsenum($1,size);locd += size;}
 	;
 
 
-bss_lines: NEWLINE {newline();} bss_lines
-	|bss_line NEWLINE {newline();} bss_lines
+bss_lines: bss_line NEWLINE {newline();} bss_lines
+	| NEWLINE {newline();} bss_lines
 	|
 	;
 
