@@ -4,3 +4,4 @@
 *.tab.*
 lex.yy.c
 *.output
+*.out
