@@ -11,7 +11,7 @@ SPACE	[ \t]+
 RES	"res"[bwtqd]
 %%
 
-;.*				{return COMMENT;}
+;.*				{}
 {SECTION}{SPACE}".data"		{return SEC_DATA;}
 {SECTION}{SPACE}".bss"		{return SEC_BSS;}
 "db"				{return DB_TYPE;}
@@ -33,7 +33,7 @@ RES	"res"[bwtqd]
     				 // remove the trailing quote
     				return STRING; 
 				}
-{NUMBER}			{value = strdup(yytext); return VALUE;}
+{NUMBER}			{yylval = atoi(yytext); return VALUE;}
 \n		{return NEWLINE;}
 {SPACE}		{}
 .		{}
