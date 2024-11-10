@@ -10,3 +10,7 @@ p.tab.c: p.y
 
 lex.yy.c: p.l
 	flex p.l
+
+lst:
+	nasm -felf32 t.s -l t.lst
+	cat t.lst
