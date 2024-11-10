@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<string.h>
 #include "utils.h"
+#include "symb.h"
 void yyerror(const char * e);
 int yylex();
 void newline();
@@ -39,14 +40,14 @@ data_lines: data_line NEWLINE {newline();} data_lines
 	| NEWLINE {newline();} data_lines
 	|
 	;
-data_line: LABEL D_TYPE {printLocation(locd); size = $2;}values
+data_line: LABEL  D_TYPE {printLocation(locd); size = $2; addLabel($1,locd,'d');}values
 	; 
 
 values: val
 	| val COMMA values
 	;
 
-val: VALUE {parsenum($1,size);locd += size;}
+val: VALUE {parsenum($1,size); locd += size;}
 	| STRING { locd += parsestr($1,size);}
 	;
 
@@ -56,7 +57,7 @@ bss_lines: bss_line NEWLINE {newline();} bss_lines
 	|
 	;
 
-bss_line: LABEL B_TYPE VALUE {printLocation(locb);printf("<res %Xh>",$2 * $3); locb += ( $2 * $3);}
+bss_line: LABEL B_TYPE VALUE {printLocation(locb);printf("<res %Xh>",$2 * $3); addLabel($1,locb,'b'); locb += ( $2 * $3);}
 	;
 
 
@@ -78,6 +79,7 @@ void yyerror(const char * e){
 int main(){
 	
 	yyparse();
+	displaySymbolTable();
 	return 0;
 
 }

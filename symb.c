@@ -102,13 +102,14 @@ void inorder(NODE *node)
     {
         return;
     }
-    printf("%ld\t%s\t%c\n", node->entry->location, node->entry->label, node->entry->section);
     inorder(node->left);
+    printf("%08lx\t%s\t\t%c\n", node->entry->location, node->entry->label, node->entry->section);
     inorder(node->right);
 }
 void displaySymbolTable()
 {
-    puts("Loc\tLbl\tSec");
-    puts("-------------------");
+    puts("Symbol Table");
+    puts("Loc\t\tLabel\t\tSection");
+    puts("--------------------------------------");
     inorder(root);
 }
