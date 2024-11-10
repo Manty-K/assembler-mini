@@ -20,12 +20,11 @@ d[bwdq]				{
 						return D_TYPE;
 					}	
 
+res[bwdq]			{
+						yylval.i = sizeFromChar(yytext[3]);
+						return B_TYPE;
+					}	
 
-"resb"				{return RESB_TYPE;}
-"resw"				{return RESW_TYPE;}
-"resd"				{return RESD_TYPE;}
-"resq"				{return RESQ_TYPE;}
-"rest"				{return REST_TYPE;}
 ,				{return COMMA;}
 {ALPNUM}			{label = strdup(yytext); return LABEL;}
 \"([^\"]*)\"			{

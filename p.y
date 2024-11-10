@@ -13,10 +13,9 @@ long loct = 0;
 int size;
 %}
 
-%token SEC_DATA SEC_BSS SEC_TEXT LABEL DB_TYPE DW_TYPE DD_TYPE DQ_TYPE DT_TYPE NEWLINE RESB_TYPE RESW_TYPE RESD_TYPE RESQ_TYPE REST_TYPE COMMA COMMENT
-%token <i> VALUE
+%token SEC_DATA SEC_BSS SEC_TEXT LABEL NEWLINE COMMA COMMENT
+%token <i> VALUE D_TYPE B_TYPE
 %token <s> STRING
-%token <i> D_TYPE
 
 %start lines
 
@@ -56,10 +55,7 @@ bss_lines: NEWLINE {newline();} bss_lines
 	|
 	;
 
-bss_line: LABEL RESB_TYPE VALUE {printLocation(locb); printf("<res %Xh>",$3); locb += $3;}
-	|  LABEL RESW_TYPE VALUE {printLocation(locb); printf("<res %Xh>",$3 * 2); locb += 2 * $3;}
-	|  LABEL RESD_TYPE VALUE {printLocation(locb); printf("<res %Xh>",$3 * 4) ;  locb += 4 * $3;}
-	|  LABEL RESQ_TYPE VALUE {printLocation(locb); printf("<res %Xh>",$3 * 8);  locb += 8 * $3;}
+bss_line: LABEL B_TYPE VALUE {printLocation(locb);printf("<res %Xh>",$2 * $3); locb += ( $2 * $3);}
 	;
 
 
