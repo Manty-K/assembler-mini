@@ -13,9 +13,9 @@ long loct = 0;
 int size;
 %}
 
-%token SEC_DATA SEC_BSS SEC_TEXT LABEL NEWLINE COMMA COMMENT
+%token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA COMMENT
 %token <i> VALUE D_TYPE B_TYPE
-%token <s> STRING
+%token <s> STRING LABEL
 
 %start lines
 

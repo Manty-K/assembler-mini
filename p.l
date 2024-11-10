@@ -1,8 +1,7 @@
 %{
-#include "p.tab.h"
-#include "utils.h"
-char *label;
-char *value;
+	#include "p.tab.h"
+	#include "utils.h"
+
 %}
 
 SECTION "section"
@@ -26,7 +25,7 @@ res[bwdq]			{
 					}	
 
 ,				{return COMMA;}
-{ALPNUM}			{label = strdup(yytext); return LABEL;}
+{ALPNUM}			{yylval.s = strdup(yytext); return LABEL;}
 \"([^\"]*)\"			{
 					yylval.s = strndup(yytext+1,yyleng-2);
     				return STRING; 
