@@ -3,7 +3,7 @@ enum ByteType
 
 	BYTE = 1,
 	WORD = 2,
-	DWORD = 4,
+	DBWORD = 4,
 	QUAD = 8,
 
 };

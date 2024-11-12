@@ -15,6 +15,10 @@ REGS (e?[abcd]x|[abcd][lh]|e?[sb]p|e?[sd]i)
 %%
 
 ;.*				{}
+\"([^\"]*)\"			{
+					yylval.s = strndup(yytext+1,yyleng-2);
+    				return STRING; 
+				}
 {SECTION}{SPACE}".data"		{return SEC_DATA;}
 {SECTION}{SPACE}".bss"		{return SEC_BSS;}
 {SECTION}{SPACE}".text"		{return SEC_TEXT;}
@@ -42,16 +46,15 @@ MOV|ADD		{yylval.s = strdup(yytext); return OPC;}
 
 global				{return GLOBAL;}
 
-{ALPNUM}			{yylval.s = strdup(yytext); return LABEL;}
-\"([^\"]*)\"			{
-					yylval.s = strndup(yytext+1,yyleng-2);
-    				return STRING; 
-				}
+
+
 {NUMBER}			{yylval.l = atoi(yytext); return VALUE;}
 
 0[Xx][0-9a-fA-F][0-9a-fA-F]*	{yylval.l= longFromHex(yytext); return HEXVAL;}
 0[Bb][0-1][0-1]*				{yylval.l= longFromBin(yytext+2);return BINVAL;}
 
+dword 						{return DWORD;}
+{ALPNUM}			{yylval.s = strdup(yytext); return LABEL;}
 
 \n		{return NEWLINE;}
 {SPACE}		{}

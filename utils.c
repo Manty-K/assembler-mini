@@ -20,7 +20,7 @@ void parsenum(long n, enum ByteType bt)
 		return;
 	}
 
-	if (bt == DWORD && (n < INT_MIN || n > INT_MAX))
+	if (bt == DBWORD && (n < INT_MIN || n > INT_MAX))
 	{
 		puts("Out of range");
 		return;
@@ -42,7 +42,7 @@ void parsenum(long n, enum ByteType bt)
 
 		printf("%04lX", n);
 	}
-	else if (bt == DWORD)
+	else if (bt == DBWORD)
 	{
 
 		printf("%08lX", n);

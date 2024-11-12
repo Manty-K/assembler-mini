@@ -14,10 +14,12 @@ long loct = 0;
 int size;
 %}
 
-%token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA GLOBAL LEFTBR RIGHTBR PLUS MINUS
+%token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA GLOBAL LEFTBR RIGHTBR PLUS MINUS DWORD
 %token <i> D_TYPE B_TYPE
 %token <l> HEXVAL BINVAL VALUE
 %token <s> STRING LABEL REG OPC MEM
+
+%type <l> immd
 
 %start lines
 
@@ -74,18 +76,21 @@ text_line: GLOBAL LABEL
 	;
 
 inst: OPC REG COMMA REG {printf("%s= %s %s  rr",$1,$2,$4);loct += 2 ;}
-	| OPC REG COMMA addr
-	| OPC REG COMMA immd {printf("%s imm: ",$1);}
+	| OPC REG COMMA addr {printf("RM");}
+	| OPC REG COMMA immd {printf("%s imm: %ld",$1,$4);}
+	| OPC addr COMMA REG {printf("MR");}
+	| OPC DWORD addr COMMA immd {printf("Chal gaya");}
 	;
 
 addr : LEFTBR REG RIGHTBR {printf("reg only");loct += 2 ;}
-	| LEFTBR REG PLUS VALUE RIGHTBR {printf("reg with +offset");loct += 2 ;}
-	| LEFTBR REG MINUS VALUE RIGHTBR {printf("reg with -offset");loct += 2 ;}
+	| LEFTBR REG PLUS immd RIGHTBR {printf("reg with +offset");loct += 2 ;}
+	| LEFTBR REG MINUS immd RIGHTBR {printf("reg with -offset");loct += 2 ;}
+	| 
 	;
 
-immd: VALUE {printf("v %ld ",$1);}
-	| BINVAL {printf("h %ld ",$1);}
-	| HEXVAL {printf("b %ld ",$1);}
+immd: VALUE
+	| BINVAL 
+	| HEXVAL 
 	;
 %%
 
