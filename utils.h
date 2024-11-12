@@ -1,4 +1,5 @@
-enum ByteType{
+enum ByteType
+{
 
 	BYTE = 1,
 	WORD = 2,
@@ -7,8 +8,11 @@ enum ByteType{
 
 };
 
-void parsenum(long  n,enum ByteType bt);
+void parsenum(long n, enum ByteType bt);
 
-int parsestr(char * s ,enum ByteType bt);
+int parsestr(char *s, enum ByteType bt);
 
 int sizeFromChar(int c);
+
+long longFromHex(char *h);
+long longFromBin(char *h);

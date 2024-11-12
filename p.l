@@ -3,12 +3,15 @@
 	#include "utils.h"
 
 %}
+%option caseless
 
 SECTION "section"
 NUMBER 	[0-9]+
 ALPNUM	[a-zA-Z_]+[a-zA-Z0-9_]*
 SPACE	[ \t]+
 RES	"res"[bwtqd]
+REGS (e?[abcd]x|[abcd][lh]|e?[sb]p|e?[sd]i)
+
 %%
 
 ;.*				{}
@@ -25,13 +28,31 @@ res[bwdq]			{
 						return B_TYPE;
 					}	
 
+{REGS}	{yylval.s = strdup(yytext); return REG;}
+
 ,				{return COMMA;}
+\+					{return PLUS;}
+\-					{return MINUS;}
+
+\[					{return LEFTBR;};
+\]					{return RIGHTBR;};
+
+
+MOV|ADD		{yylval.s = strdup(yytext); return OPC;}
+
+global				{return GLOBAL;}
+
 {ALPNUM}			{yylval.s = strdup(yytext); return LABEL;}
 \"([^\"]*)\"			{
 					yylval.s = strndup(yytext+1,yyleng-2);
     				return STRING; 
 				}
-{NUMBER}			{yylval.i = atoi(yytext); return VALUE;}
+{NUMBER}			{yylval.l = atoi(yytext); return VALUE;}
+
+0[Xx][0-9a-fA-F][0-9a-fA-F]*	{yylval.l= longFromHex(yytext); return HEXVAL;}
+0[Bb][0-1][0-1]*				{yylval.l= longFromBin(yytext+2);return BINVAL;}
+
+
 \n		{return NEWLINE;}
 {SPACE}		{}
 .		{}

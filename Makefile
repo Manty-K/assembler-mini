@@ -15,6 +15,7 @@ lex.yy.c: p.l
 lst:
 	nasm -felf32 t.s -l t.lst
 	cat t.lst
+	nm t.o
 	
 clean:
 	rm -rf *.tab.* lex.yy.c *.o

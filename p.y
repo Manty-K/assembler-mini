@@ -14,14 +14,16 @@ long loct = 0;
 int size;
 %}
 
-%token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA 
-%token <i> VALUE D_TYPE B_TYPE
-%token <s> STRING LABEL
+%token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA GLOBAL LEFTBR RIGHTBR PLUS MINUS
+%token <i> D_TYPE B_TYPE
+%token <l> HEXVAL BINVAL VALUE
+%token <s> STRING LABEL REG OPC MEM
 
 %start lines
 
 %union{
 	int i;
+	long l;
 	char *s;
 }
 
@@ -33,7 +35,7 @@ lines: line lines
 
 line : SEC_BSS {printf("SECTION BSS");} NEWLINE {newline();} bss_lines
   	| SEC_DATA {printf("SECTION DATA");} NEWLINE {newline();} data_lines
-	| SEC_TEXT {printf("SECTION TEXT");}
+	| SEC_TEXT {printf("SECTION TEXT");} NEWLINE {newline();} text_lines
 	;
 
 data_lines: data_line NEWLINE {newline();} data_lines
@@ -57,10 +59,34 @@ bss_lines: bss_line NEWLINE {newline();} bss_lines
 	|
 	;
 
-bss_line: LABEL B_TYPE VALUE {printLocation(locb);printf("<res %Xh>",$2 * $3); addLabel($1,locb,'b'); locb += ( $2 * $3);}
+bss_line: LABEL B_TYPE VALUE {printLocation(locb);printf("<res %lXh>",$2 * $3); addLabel($1,locb,'b'); locb += ( $2 * $3);}
 	;
 
 
+text_lines: text_line NEWLINE {newline();} text_lines
+	| NEWLINE {newline();} text_lines
+	|
+	;
+
+text_line: GLOBAL LABEL
+	|{printLocation(loct);} LABEL inst 
+	|{printLocation(loct);} inst
+	;
+
+inst: OPC REG COMMA REG {printf("%s= %s %s  rr",$1,$2,$4);loct += 2 ;}
+	| OPC REG COMMA addr
+	| OPC REG COMMA immd {printf("%s imm: ",$1);}
+	;
+
+addr : LEFTBR REG RIGHTBR {printf("reg only");loct += 2 ;}
+	| LEFTBR REG PLUS VALUE RIGHTBR {printf("reg with +offset");loct += 2 ;}
+	| LEFTBR REG MINUS VALUE RIGHTBR {printf("reg with -offset");loct += 2 ;}
+	;
+
+immd: VALUE {printf("v %ld ",$1);}
+	| BINVAL {printf("h %ld ",$1);}
+	| HEXVAL {printf("b %ld ",$1);}
+	;
 %%
 
 void newline(){
@@ -79,6 +105,7 @@ void yyerror(const char * e){
 int main(){
 	
 	yyparse();
+	puts("\n\n");
 	displaySymbolTable();
 	return 0;
 
