@@ -76,7 +76,11 @@ text_line: GLOBAL LABEL
 	|{printLocation(loct);} inst
 	;
 
-inst: OPC REG COMMA REG {printf(" %lX ",getModRM(3, 0 ,1));loct += 2 ;}
+inst: OPC
+	| OPC immd
+	| OPC LABEL
+	| OPC REG 
+	| OPC REG COMMA REG {printf(" %lX ",getModRM(3, 0 ,1));loct += 2 ;}
 	| OPC REG COMMA addr {printf("RM");}
 	| OPC REG COMMA immd {printf("%s imm: %ld",$1,$4);}
 	| OPC addr COMMA REG {printf("MR");}
