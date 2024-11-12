@@ -1,1 +1,1 @@
-void getModRM(int mod, int src, int dest);
+long getModRM(int mod, int dest, int src);

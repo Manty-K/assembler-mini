@@ -3,6 +3,7 @@
 #include<string.h>
 #include "utils.h"
 #include "symb.h"
+#include "modrm.h"
 void yyerror(const char * e);
 int yylex();
 void newline();
@@ -75,7 +76,7 @@ text_line: GLOBAL LABEL
 	|{printLocation(loct);} inst
 	;
 
-inst: OPC REG COMMA REG {printf("%s= %s %s  rr",$1,$2,$4);loct += 2 ;}
+inst: OPC REG COMMA REG {printf(" %lX ",getModRM(3, 0 ,1));loct += 2 ;}
 	| OPC REG COMMA addr {printf("RM");}
 	| OPC REG COMMA immd {printf("%s imm: %ld",$1,$4);}
 	| OPC addr COMMA REG {printf("MR");}
@@ -85,7 +86,6 @@ inst: OPC REG COMMA REG {printf("%s= %s %s  rr",$1,$2,$4);loct += 2 ;}
 addr : LEFTBR REG RIGHTBR {printf("reg only");loct += 2 ;}
 	| LEFTBR REG PLUS immd RIGHTBR {printf("reg with +offset");loct += 2 ;}
 	| LEFTBR REG MINUS immd RIGHTBR {printf("reg with -offset");loct += 2 ;}
-	| 
 	;
 
 immd: VALUE

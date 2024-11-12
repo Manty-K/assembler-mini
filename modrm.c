@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-const char *modrm_table[][8] = {
+#include "utils.h"
+char *modrm_table[][8] = {
     {"00", "01", "02", "03", "04", "05", "06", "07"},
     {"08", "09", "0A", "0B", "0C", "0D", "0E", "0F"},
     {"10", "11", "12", "13", "14", "15", "16", "17"},
@@ -35,8 +36,7 @@ const char *modrm_table[][8] = {
     {"F8", "F9", "FA", "FB", "FC", "FD", "FE", "FF"},
 };
 
-void getModRM(int mod, int src, int dest)
+long getModRM(int mod, int dest, int src)
 {
-    return modrm_table[8 * mod + src][dest];
+    return longFromHex(modrm_table[8 * mod + src][dest]);
 }
-
