@@ -113,7 +113,7 @@ long longFromBin(char *h)
 	return strtol(h, NULL, 2);
 }
 
-long getRegId(char *reg)
+int getRegId(char *reg)
 {
 	/*
 	eax to edi  0 -7

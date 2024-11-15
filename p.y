@@ -82,7 +82,7 @@ inst: OPC
 	| OPC REG 			{loct += getYoo($1,$2);}
 	| OPC REG COMMA REG {loct += tworeg($1,$2,$4);}
 	| OPC REG COMMA addr {printf("RM");}
-	| OPC REG COMMA immd {printf("%s imm: %ld",$1,$4);}
+	| OPC REG COMMA immd {loct += regimm($1,$2,$4);}
 	| OPC addr COMMA REG {printf("MR");}
 	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4);}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {printf("hmm2");}

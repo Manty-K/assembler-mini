@@ -51,7 +51,7 @@ typedef struct singleReg
 
 int getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
 {
-    int count = 1;
+    int count = 0;
 
     /// For 16 bit
     if (regId > 7 && regId < 16)
@@ -59,16 +59,18 @@ int getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
         printf("66");
         count++;
     }
-    /// OPcode
+    /// Opcode
     if (regId < 16)
     {
         if (rd)
         {
             printf("%02lX", (long)rd + regId % 8);
+            count++;
         }
         else
         {
             printf("%s", m32);
+            count++;
         }
     }
     else
@@ -91,19 +93,19 @@ int getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
     {
         if (!rd)
         {
-            printf("%lX", getModRM(3, regId % 8, colm));
+            printf("%02lX", getModRM(3, regId % 8, colm));
             count++;
         }
     }
-    else if (regId < 20)
+    else if (regId < 20 && regId > 15)
     {
 
-        printf("%lX", getModRM(3, (regId % 4) + 4, colm));
+        printf("%02lX", getModRM(3, (regId % 4) + 4, colm));
         count++;
     }
-    else
+    else if (regId > 20 && regId < 24)
     {
-        printf("%lX", getModRM(3, regId % 4, colm));
+        printf("%02lX", getModRM(3, regId % 4, colm));
         count++;
     }
 
@@ -135,6 +137,10 @@ int getYoo(char *opc, char *reg)
     {
 
         return getSingReg(opc, regId, 4, NULL, "FF", 0);
+    }
+    else if (!strcmp(opc, "not"))
+    {
+        return getSingReg(opc, regId, 2, "F6", "F7", 0);
     }
     else
     {
@@ -311,10 +317,80 @@ int tworeg(char *op, char *r1, char *r2)
     {
         return tworegcalc("38", "39", r1val, r2val);
     }
+    else if (!strcmp(op, "and"))
+    {
+        return tworegcalc("20", "21", r1val, r2val);
+    }
+    else if (!strcmp(op, "or"))
+    {
+        return tworegcalc("08", "09", r1val, r2val);
+    }
     else
     {
         printf("Not defined");
     }
 
     return 2;
+}
+
+int regimmcalc(char *m8, char *m32, int reg, long immval)
+{
+    int count = 1;
+    if (reg >= 8 && reg < 16)
+    {
+        printf("66");
+        count++;
+    }
+
+    if (reg > 19)
+    {
+
+        printf("%02lX", longFromHex(m8) + (reg % 4));
+    }
+    else if (reg > 15)
+    {
+        printf("%02lX", longFromHex(m8) + reg % 4 + 4);
+    }
+    else
+    {
+        printf("%02lX", longFromHex(m32) + reg % 8);
+    }
+
+    if (immval <= 0xFF && reg > 15)
+    {
+        printf("%02lX", immval);
+        count += 1;
+    }
+    else if (immval <= 0xFFFF && reg < 16)
+    {
+        printf("%04lX", immval);
+        count += 2;
+    }
+    else if (immval <= 0xFFFFFFFF && reg < 8)
+    {
+        printf("%08lX", immval);
+        count += 4;
+    }
+    else
+    {
+        printf("value out of range");
+        return 0;
+    }
+
+    return count;
+}
+
+int regimm(char *op, char *reg, long immval)
+{
+    int r = getRegId(reg);
+
+    if (!strcmp(op, "mov"))
+    {
+        return regimmcalc("B0", "B8", r, immval);
+    }
+    else
+    {
+        printf("Not defined");
+    }
+    return 0;
 }
