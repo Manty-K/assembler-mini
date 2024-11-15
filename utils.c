@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"
+#include <ctype.h>
 
 void parsenum(long n, enum ByteType bt)
 {
@@ -110,4 +111,119 @@ long longFromHex(char *h)
 long longFromBin(char *h)
 {
 	return strtol(h, NULL, 2);
+}
+
+long getRegId(char *reg)
+{
+	/*
+	eax to edi  0 -7
+	ax - di - 8 - 15
+	ah - dh - 16 - 19
+	al - dl - 20 - 23
+	*/
+	if (!strcmp(reg, "eax"))
+	{
+		return 0;
+	}
+	if (!strcmp(reg, "ecx"))
+	{
+		return 1;
+	}
+	if (!strcmp(reg, "edx"))
+	{
+		return 2;
+	}
+	if (!strcmp(reg, "ebx"))
+	{
+		return 3;
+	}
+	if (!strcmp(reg, "esp"))
+	{
+		return 4;
+	}
+	if (!strcmp(reg, "ebp"))
+	{
+		return 5;
+	}
+	if (!strcmp(reg, "esi"))
+	{
+		return 6;
+	}
+	if (!strcmp(reg, "edi"))
+	{
+		return 7;
+	}
+	if (!strcmp(reg, "ax"))
+	{
+		return 8;
+	}
+	if (!strcmp(reg, "cx"))
+	{
+		return 9;
+	}
+	if (!strcmp(reg, "dx"))
+	{
+		return 10;
+	}
+	if (!strcmp(reg, "bx"))
+	{
+		return 11;
+	}
+	if (!strcmp(reg, "sp"))
+	{
+		return 12;
+	}
+	if (!strcmp(reg, "bp"))
+	{
+		return 13;
+	}
+	if (!strcmp(reg, "si"))
+	{
+		return 14;
+	}
+	if (!strcmp(reg, "di"))
+	{
+		return 15;
+	}
+
+	if (!strcmp(reg, "ah"))
+	{
+		return 16;
+	}
+	if (!strcmp(reg, "ch"))
+	{
+		return 17;
+	}
+	if (!strcmp(reg, "dh"))
+	{
+		return 18;
+	}
+	if (!strcmp(reg, "bh"))
+	{
+		return 19;
+	}
+	if (!strcmp(reg, "al"))
+	{
+		return 20;
+	}
+	if (!strcmp(reg, "cl"))
+	{
+		return 21;
+	}
+	if (!strcmp(reg, "dl"))
+	{
+		return 22;
+	}
+	if (!strcmp(reg, "bl"))
+	{
+		return 23;
+	}
+}
+
+void lowercase(char *str)
+{
+	for (int i = 0; str[i]; i++)
+	{
+		str[i] = tolower(str[i]);
+	}
 }

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "utils.h"
+#include <ctype.h>
+#include <string.h>
 char *modrm_table[][8] = {
     {"00", "01", "02", "03", "04", "05", "06", "07"},
     {"08", "09", "0A", "0B", "0C", "0D", "0E", "0F"},
@@ -39,4 +41,127 @@ char *modrm_table[][8] = {
 long getModRM(int mod, int dest, int src)
 {
     return longFromHex(modrm_table[8 * mod + src][dest]);
+}
+
+typedef struct singleReg
+{
+    char *op;
+    int reg;
+} SINREG;
+
+INSTHEX getIncSingleReg(char *opc, char *reg, char *op, int offset, int src)
+{
+
+    INSTHEX insthex;
+    long regId = getRegId(reg);
+
+    if (regId > 7 && regId < 16)
+    {
+        insthex.prefix = 102;
+        printf("66");
+    }
+
+    if (regId < 16)
+    {
+        insthex.modrm = offset + regId % 8;
+        printf("%lX", offset + regId % 8);
+    }
+    else if (regId < 20)
+    {
+        printf("%s", op);
+
+        printf("%lX", getModRM(3, (regId % 4) + 4, src));
+    }
+    else
+    {
+        printf("%s", op);
+        printf("%lX", getModRM(3, regId % 4, src));
+    }
+
+    return insthex;
+}
+
+void getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
+{
+
+    /// For 16 bit
+    if (regId > 7 && regId < 16)
+    {
+        printf("66");
+    }
+    /// OPcode
+    if (regId < 16)
+    {
+        if (rd)
+        {
+            printf("%lX", rd + regId % 8);
+        }
+        else
+        {
+            printf("%s", m32);
+        }
+    }
+    else
+    {
+        if (m8 != NULL)
+        {
+
+            printf("%s", m8);
+        }
+        else
+        {
+            puts("Invalid combination");
+            return;
+        }
+    }
+
+    /// rest
+    if (regId < 16)
+    {
+        if (!rd)
+        {
+            printf("%X", getModRM(3, regId % 8, colm));
+        }
+    }
+    else if (regId < 20)
+    {
+
+        printf("%X", getModRM(3, (regId % 4) + 4, colm));
+    }
+    else
+    {
+        printf("%X", getModRM(3, regId % 4, colm));
+    }
+}
+
+void getYoo(char *opc, char *reg)
+{
+    long regId = getRegId(reg);
+    if (!strcmp(opc, "inc"))
+    {
+        getSingReg(opc, regId, 0, "FE", NULL, 64);
+    }
+    else if (!strcmp(opc, "dec"))
+    {
+        getSingReg(opc, regId, 1, "FE", NULL, 72);
+    }
+    else if (!strcmp(opc, "div"))
+    {
+
+        getSingReg(opc, regId, 6, "F6", "F7", 0);
+    }
+    else if (!strcmp(opc, "mul"))
+    {
+
+        getSingReg(opc, regId, 4, "F6", "F7", 0);
+    }
+    else if (!strcmp(opc, "jmp"))
+    {
+
+        getSingReg(opc, regId, 4, NULL, "FF", 0);
+    }
+    else
+    {
+        printf("Not defined");
+    }
 }
