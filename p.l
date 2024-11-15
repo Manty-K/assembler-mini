@@ -32,7 +32,7 @@ res[bwdq]			{
 						return B_TYPE;
 					}	
 
-{REGS}	{yylval.s = strdup(yytext); return REG;}
+{REGS}	{  lowercase(yytext); yylval.s =  strdup(yytext); return REG;}
 
 ,				{return COMMA;}
 \+					{return PLUS;}
@@ -42,7 +42,7 @@ res[bwdq]			{
 \]					{return RIGHTBR;};
 
 
-MOV|ADD		{yylval.s = strdup(yytext); return OPC;}
+MOV|ADD|INC|DEC		{lowercase(yytext); yylval.s = strdup(yytext); return OPC;}
 
 global				{return GLOBAL;}
 
