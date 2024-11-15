@@ -142,6 +142,10 @@ int getYoo(char *opc, char *reg)
     {
         return getSingReg(opc, regId, 2, "F6", "F7", 0);
     }
+    else if (!strcmp(opc, "neg"))
+    {
+        return getSingReg(opc, regId, 3, "F6", "F7", 0);
+    }
     else
     {
         printf("Not defined");
