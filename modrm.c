@@ -94,7 +94,7 @@ void getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
     {
         if (rd)
         {
-            printf("%lX", rd + regId % 8);
+            printf("%lX", (long)rd + regId % 8);
         }
         else
         {
@@ -120,17 +120,17 @@ void getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
     {
         if (!rd)
         {
-            printf("%X", getModRM(3, regId % 8, colm));
+            printf("%lX", getModRM(3, regId % 8, colm));
         }
     }
     else if (regId < 20)
     {
 
-        printf("%X", getModRM(3, (regId % 4) + 4, colm));
+        printf("%lX", getModRM(3, (regId % 4) + 4, colm));
     }
     else
     {
-        printf("%X", getModRM(3, regId % 4, colm));
+        printf("%lX", getModRM(3, regId % 4, colm));
     }
 }
 
@@ -159,6 +159,79 @@ void getYoo(char *opc, char *reg)
     {
 
         getSingReg(opc, regId, 4, NULL, "FF", 0);
+    }
+    else
+    {
+        printf("Not defined");
+    }
+}
+
+void memAddr(char *op, int colm, int regid)
+{
+    if (regid > 15 || regid == 12)
+    {
+        puts("Not supported");
+        return;
+    }
+    if (regid >= 13)
+    {
+        printf("67");
+    }
+
+    printf("%s", op);
+
+    if (regid == 4) // esp
+    {
+        printf("%02lX", getModRM(0, regid, colm));
+        printf("24");
+    }
+    else if (regid == 5) // ebp
+    {
+        printf("%02lX", getModRM(1, regid, colm));
+        printf("00");
+    }
+    else if (regid < 8)
+    {
+        printf("%02lX", getModRM(0, regid, colm));
+    }
+    else if (regid == 14 || regid == 15)
+    {
+        printf("%02lX", getModRM(0, regid % 8 - 2, colm));
+    }
+    else if (regid == 13)
+    {
+        printf("%02lX", getModRM(1, 6, colm));
+        printf("00");
+    }
+    else
+    {
+        printf("Invalid reg %d", regid);
+    }
+}
+
+void getYoo2(char *opc, char *reg)
+{
+
+    long regId = getRegId(reg);
+    if (!strcmp(opc, "inc"))
+    {
+        memAddr("FF", 0, regId);
+    }
+    else if (!strcmp(opc, "dec"))
+    {
+        memAddr("FF", 1, regId);
+    }
+    else if (!strcmp(opc, "div"))
+    {
+        memAddr("FF", 6, regId);
+    }
+    else if (!strcmp(opc, "mul"))
+    {
+        memAddr("F7", 4, regId);
+    }
+    else if (!strcmp(opc, "jmp"))
+    {
+        memAddr("FF", 4, regId);
     }
     else
     {

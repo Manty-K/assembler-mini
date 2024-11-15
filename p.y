@@ -84,6 +84,9 @@ inst: OPC
 	| OPC REG COMMA addr {printf("RM");}
 	| OPC REG COMMA immd {printf("%s imm: %ld",$1,$4);}
 	| OPC addr COMMA REG {printf("MR");}
+	| OPC DWORD LEFTBR REG RIGHTBR    {getYoo2($1,$4);}
+	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {printf("hmm2");}
+	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR {printf("hmm3");}
 	| OPC DWORD addr COMMA immd {printf("Chal gaya");}
 	;
 
