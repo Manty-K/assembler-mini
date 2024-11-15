@@ -49,52 +49,22 @@ typedef struct singleReg
     int reg;
 } SINREG;
 
-INSTHEX getIncSingleReg(char *opc, char *reg, char *op, int offset, int src)
+int getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
 {
-
-    INSTHEX insthex;
-    long regId = getRegId(reg);
-
-    if (regId > 7 && regId < 16)
-    {
-        insthex.prefix = 102;
-        printf("66");
-    }
-
-    if (regId < 16)
-    {
-        insthex.modrm = offset + regId % 8;
-        printf("%lX", offset + regId % 8);
-    }
-    else if (regId < 20)
-    {
-        printf("%s", op);
-
-        printf("%lX", getModRM(3, (regId % 4) + 4, src));
-    }
-    else
-    {
-        printf("%s", op);
-        printf("%lX", getModRM(3, regId % 4, src));
-    }
-
-    return insthex;
-}
-
-void getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
-{
+    int count = 1;
 
     /// For 16 bit
     if (regId > 7 && regId < 16)
     {
         printf("66");
+        count++;
     }
     /// OPcode
     if (regId < 16)
     {
         if (rd)
         {
-            printf("%lX", (long)rd + regId % 8);
+            printf("%02lX", (long)rd + regId % 8);
         }
         else
         {
@@ -107,11 +77,12 @@ void getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
         {
 
             printf("%s", m8);
+            count++;
         }
         else
         {
             puts("Invalid combination");
-            return;
+            return 0;
         }
     }
 
@@ -121,61 +92,69 @@ void getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
         if (!rd)
         {
             printf("%lX", getModRM(3, regId % 8, colm));
+            count++;
         }
     }
     else if (regId < 20)
     {
 
         printf("%lX", getModRM(3, (regId % 4) + 4, colm));
+        count++;
     }
     else
     {
         printf("%lX", getModRM(3, regId % 4, colm));
+        count++;
     }
+
+    return count;
 }
 
-void getYoo(char *opc, char *reg)
+int getYoo(char *opc, char *reg)
 {
     long regId = getRegId(reg);
     if (!strcmp(opc, "inc"))
     {
-        getSingReg(opc, regId, 0, "FE", NULL, 64);
+        return getSingReg(opc, regId, 0, "FE", NULL, 64);
     }
     else if (!strcmp(opc, "dec"))
     {
-        getSingReg(opc, regId, 1, "FE", NULL, 72);
+        return getSingReg(opc, regId, 1, "FE", NULL, 72);
     }
     else if (!strcmp(opc, "div"))
     {
 
-        getSingReg(opc, regId, 6, "F6", "F7", 0);
+        return getSingReg(opc, regId, 6, "F6", "F7", 0);
     }
     else if (!strcmp(opc, "mul"))
     {
 
-        getSingReg(opc, regId, 4, "F6", "F7", 0);
+        return getSingReg(opc, regId, 4, "F6", "F7", 0);
     }
     else if (!strcmp(opc, "jmp"))
     {
 
-        getSingReg(opc, regId, 4, NULL, "FF", 0);
+        return getSingReg(opc, regId, 4, NULL, "FF", 0);
     }
     else
     {
         printf("Not defined");
     }
+    return 0;
 }
 
-void memAddr(char *op, int colm, int regid)
+int memAddr(char *op, int colm, int regid)
 {
     if (regid > 15 || regid == 12)
     {
         puts("Not supported");
-        return;
+        return 0;
     }
+    int count = 2;
     if (regid >= 13)
     {
         printf("67");
+        count++;
     }
 
     printf("%s", op);
@@ -184,11 +163,13 @@ void memAddr(char *op, int colm, int regid)
     {
         printf("%02lX", getModRM(0, regid, colm));
         printf("24");
+        count++;
     }
     else if (regid == 5) // ebp
     {
         printf("%02lX", getModRM(1, regid, colm));
         printf("00");
+        count++;
     }
     else if (regid < 8)
     {
@@ -202,39 +183,138 @@ void memAddr(char *op, int colm, int regid)
     {
         printf("%02lX", getModRM(1, 6, colm));
         printf("00");
+        count++;
     }
     else
     {
         printf("Invalid reg %d", regid);
+        return 0;
     }
+    return count;
 }
 
-void getYoo2(char *opc, char *reg)
+int getYoo2(char *opc, char *reg)
 {
 
     long regId = getRegId(reg);
     if (!strcmp(opc, "inc"))
     {
-        memAddr("FF", 0, regId);
+        return memAddr("FF", 0, regId);
     }
     else if (!strcmp(opc, "dec"))
     {
-        memAddr("FF", 1, regId);
+        return memAddr("FF", 1, regId);
     }
     else if (!strcmp(opc, "div"))
     {
-        memAddr("FF", 6, regId);
+        return memAddr("FF", 6, regId);
     }
     else if (!strcmp(opc, "mul"))
     {
-        memAddr("F7", 4, regId);
+        return memAddr("F7", 4, regId);
     }
     else if (!strcmp(opc, "jmp"))
     {
-        memAddr("FF", 4, regId);
+        return memAddr("FF", 4, regId);
     }
     else
     {
         printf("Not defined");
     }
+    return 0;
+}
+
+long r8modrm(int r1, int r2)
+{
+    int a;
+    int b;
+    if (r1 >= 20)
+    {
+        a = r1 % 4;
+    }
+    if (r2 >= 20)
+    {
+        b = r2 % 4;
+    }
+    if (r1 < 20)
+    {
+        a = r1 % 4 + 4;
+    }
+    if (r2 < 20)
+    {
+        b = r2 % 4 + 4;
+    }
+    return getModRM(3, a, b);
+}
+
+int tworegcalc(char *m8, char *m32, int r1, int r2)
+{
+    int count = 2;
+    if (!sameSizeRegs(r1, r2))
+    {
+        puts("reg mismatch");
+        return 0;
+    }
+
+    /// For 16 bit
+    if (r1 > 7 && r1 < 16)
+    {
+        printf("66");
+        count++;
+    }
+
+    /// OP
+    if (r1 > 15)
+    {
+        printf("%s", m8);
+    }
+    else
+    {
+        printf("%s", m32);
+    }
+
+    /// rest
+    if (r1 < 16)
+    {
+        printf("%02lX", getModRM(3, r1 % 8, r2 % 8));
+    }
+    else
+    {
+        printf("%02lX", r8modrm(r1, r2));
+    }
+    return count;
+}
+
+int tworeg(char *op, char *r1, char *r2)
+{
+
+    long r1val = getRegId(r1);
+    long r2val = getRegId(r2);
+
+    if (!strcmp(op, "add"))
+    {
+        return tworegcalc("00", "01", r1val, r2val);
+    }
+    else if (!strcmp(op, "sub"))
+    {
+        return tworegcalc("28", "29", r1val, r2val);
+    }
+    else if (!strcmp(op, "mov"))
+    {
+        return tworegcalc("88", "89", r1val, r2val);
+    }
+    else if (!strcmp(op, "xor"))
+    {
+        return tworegcalc("30", "31", r1val, r2val);
+    }
+    else if (!strcmp(op, "cmp"))
+    {
+        return tworegcalc("38", "39", r1val, r2val);
+    }
+    else
+    {
+        printf("Not defined");
+    }
+
+    return 2;
 }

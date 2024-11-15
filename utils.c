@@ -227,3 +227,23 @@ void lowercase(char *str)
 		str[i] = tolower(str[i]);
 	}
 }
+
+int sameSizeRegs(int r1, int r2)
+{
+
+	if (r1 >= 0 && r1 < 8 && r2 >= 0 && r2 < 8)
+	{
+		return 1;
+	}
+
+	if (r1 >= 8 && r1 < 16 && r2 >= 8 && r2 < 16)
+	{
+		return 1;
+	}
+	if (r1 >= 16 && r2 >= 16)
+	{
+		return 1;
+	}
+
+	return 0;
+}

@@ -79,12 +79,12 @@ text_line: GLOBAL LABEL
 inst: OPC
 	| OPC immd
 	| OPC LABEL
-	| OPC REG 			{getYoo($1,$2);}
-	| OPC REG COMMA REG {printf(" %lX ",getModRM(3, 0 ,1));loct += 2 ;}
+	| OPC REG 			{loct += getYoo($1,$2);}
+	| OPC REG COMMA REG {loct += tworeg($1,$2,$4);}
 	| OPC REG COMMA addr {printf("RM");}
 	| OPC REG COMMA immd {printf("%s imm: %ld",$1,$4);}
 	| OPC addr COMMA REG {printf("MR");}
-	| OPC DWORD LEFTBR REG RIGHTBR    {getYoo2($1,$4);}
+	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4);}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {printf("hmm2");}
 	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR {printf("hmm3");}
 	| OPC DWORD addr COMMA immd {printf("Chal gaya");}

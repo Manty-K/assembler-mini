@@ -28,3 +28,4 @@ long longFromHex(char *h);
 long longFromBin(char *h);
 long getRegId(char *reg);
 void lowercase(char *str);
+int sameSizeRegs(int r1, int r2);
