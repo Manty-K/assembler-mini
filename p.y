@@ -76,7 +76,7 @@ text_line: GLOBAL LABEL
 	|{printLocation(loct);} inst
 	;
 
-inst: OPC
+inst: OPC				{loct += onlyOp($1);}
 	| OPC immd
 	| OPC LABEL
 	| OPC REG 			{loct += getYoo($1,$2);}

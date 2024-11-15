@@ -398,3 +398,23 @@ int regimm(char *op, char *reg, long immval)
     }
     return 0;
 }
+
+int onlyOp(char *op)
+{
+
+    if (!strcmp(op, "ret"))
+    {
+        printf("C3");
+        return 1;
+    }
+    else if (!strcmp(op, "nop"))
+    {
+        printf("90");
+        return 1;
+    }
+    else
+    {
+        printf("Not defined");
+        return 0;
+    }
+}
