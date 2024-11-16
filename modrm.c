@@ -49,7 +49,7 @@ typedef struct singleReg
     int reg;
 } SINREG;
 
-int getSingReg(char *opc, int regId, int colm, char *m8, char *m32, int rd)
+int getSingReg(int regId, int colm, char *m8, char *m32, int rd)
 {
     int count = 0;
 
@@ -117,34 +117,34 @@ int getYoo(char *opc, char *reg)
     long regId = getRegId(reg);
     if (!strcmp(opc, "inc"))
     {
-        return getSingReg(opc, regId, 0, "FE", NULL, 64);
+        return getSingReg(regId, 0, "FE", NULL, 64);
     }
     else if (!strcmp(opc, "dec"))
     {
-        return getSingReg(opc, regId, 1, "FE", NULL, 72);
+        return getSingReg(regId, 1, "FE", NULL, 72);
     }
     else if (!strcmp(opc, "div"))
     {
 
-        return getSingReg(opc, regId, 6, "F6", "F7", 0);
+        return getSingReg(regId, 6, "F6", "F7", 0);
     }
     else if (!strcmp(opc, "mul"))
     {
 
-        return getSingReg(opc, regId, 4, "F6", "F7", 0);
+        return getSingReg(regId, 4, "F6", "F7", 0);
     }
     else if (!strcmp(opc, "jmp"))
     {
 
-        return getSingReg(opc, regId, 4, NULL, "FF", 0);
+        return getSingReg(regId, 4, NULL, "FF", 0);
     }
     else if (!strcmp(opc, "not"))
     {
-        return getSingReg(opc, regId, 2, "F6", "F7", 0);
+        return getSingReg(regId, 2, "F6", "F7", 0);
     }
     else if (!strcmp(opc, "neg"))
     {
-        return getSingReg(opc, regId, 3, "F6", "F7", 0);
+        return getSingReg(regId, 3, "F6", "F7", 0);
     }
     else
     {
@@ -417,4 +417,106 @@ int onlyOp(char *op)
         printf("Not defined");
         return 0;
     }
+}
+int opimmcalc(char *opc, long imm)
+{
+    printf("%s", opc);
+    printf("(%08lX)", imm);
+    return 5;
+}
+
+int opimm(char *op, long imm)
+{
+
+    if (!strcmp(op, "jmp"))
+    {
+
+        return opimmcalc("E9", imm);
+    }
+    else
+    {
+
+        printf("Not defined");
+    }
+    return 0;
+}
+
+int addrRegRegCalc(char *m8, char *m32, int r1, int r2)
+{
+    int count = 1;
+
+    if (r2 > 7 && r2 < 16)
+    {
+
+        printf("66");
+        count++;
+    }
+
+    if (r1 >= 13 && r1 <= 15)
+    {
+
+        printf("67");
+        count++;
+    }
+
+    if (r2 > 15)
+    {
+        printf("%s", m8);
+    }
+    else
+    {
+        printf("%s", m32);
+    }
+
+    if (r1 < 16 && r2 < 16) // r1: 32,16   r2: 32,16
+    {
+        if (r1 == 14 || r1 == 15)
+        {
+            printf("%02lX", getModRM(0, r1 % 8, r2 % 8) - 2);
+            count++;
+        }
+
+        else
+        {
+            printf("%02lX", getModRM(0, r1 % 8, r2 % 8));
+            count++;
+        }
+    }
+    else if (r1 < 8 && r2 > 15) // r1 32 bit, r1 : 8 bit
+    {
+        if (r2 >= 20)
+        {
+            printf("%02lX", getModRM(0, r1, r2 % 4));
+        }
+        else
+        {
+            printf("%02lX", getModRM(0, r1, r2 % 4 + 4));
+        }
+
+        count++;
+    }
+
+    if (r1 == 4)
+    {
+        printf("24");
+    }
+
+    return count;
+}
+
+int addrRegReg(char *op, char *r1, char *r2)
+{
+    int r1val = getRegId(r1);
+    int r2val = getRegId(r2);
+
+    if (!strcmp(op, "mov"))
+    {
+        return addrRegRegCalc("88", "89", r1val, r2val);
+    }
+    else
+    {
+        printf("not defined");
+    }
+
+    return 0;
 }

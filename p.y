@@ -77,11 +77,11 @@ text_line: GLOBAL LABEL
 	;
 
 inst: OPC				{loct += onlyOp($1);}
-	| OPC immd
+	| OPC immd			{loct += opimm($1,$2);}
 	| OPC LABEL
 	| OPC REG 			{loct += getYoo($1,$2);}
 	| OPC REG COMMA REG {loct += tworeg($1,$2,$4);}
-	| OPC REG COMMA addr {printf("RM");}
+	| OPC LEFTBR REG RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$6);}
 	| OPC REG COMMA immd {loct += regimm($1,$2,$4);}
 	| OPC addr COMMA REG {printf("MR");}
 	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4);}
