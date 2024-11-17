@@ -8,3 +8,4 @@ int regimm(char *op, char *reg, long immval);
 int onlyOp(char *op);
 int opimm(char *op, long imm);
 int addrRegReg(char *op, char *r1, char *r2);
+int oplabel(char *op, char *label);

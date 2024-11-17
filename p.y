@@ -78,22 +78,21 @@ text_line: GLOBAL LABEL
 
 inst: OPC				{loct += onlyOp($1);}
 	| OPC immd			{loct += opimm($1,$2);}
-	| OPC LABEL
+	| OPC LABEL			{loct += oplabel($1,$2);}
 	| OPC REG 			{loct += getYoo($1,$2);}
 	| OPC REG COMMA REG {loct += tworeg($1,$2,$4);}
 	| OPC LEFTBR REG RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$6);}
+	| OPC LEFTBR REG  PLUS immd  RIGHTBR COMMA REG {printf("++");}
+	| OPC LEFTBR REG  MINUS immd  RIGHTBR COMMA REG {printf("--");}
 	| OPC REG COMMA immd {loct += regimm($1,$2,$4);}
-	| OPC addr COMMA REG {printf("MR");}
 	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4);}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {printf("hmm2");}
 	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR {printf("hmm3");}
-	| OPC DWORD addr COMMA immd {printf("Chal gaya");}
+	| OPC DWORD LEFTBR REG RIGHTBR COMMA immd {printf("Chal gaya");}
+	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR COMMA immd {printf("Chal gaya2");}
+	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA immd {printf("Chal gaya3");}
 	;
 
-addr : LEFTBR REG RIGHTBR {printf("reg only");loct += 2 ;}
-	| LEFTBR REG PLUS immd RIGHTBR {printf("reg with +offset");loct += 2 ;}
-	| LEFTBR REG MINUS immd RIGHTBR {printf("reg with -offset");loct += 2 ;}
-	;
 
 immd: VALUE
 	| BINVAL 

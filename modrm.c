@@ -520,3 +520,32 @@ int addrRegReg(char *op, char *r1, char *r2)
 
     return 0;
 }
+int oplabelCalc(char *opc, char *label)
+{
+    printf("%s", opc);
+    printf("--");
+
+    return 2;
+}
+
+int oplabel(char *op, char *label)
+{
+
+    if (!strcmp(op, "jmp"))
+    {
+        return oplabelCalc("E9", label);
+    }
+    else if (!strcmp(op, "jz") || !strcmp(op, "je"))
+    {
+        return oplabelCalc("74", label);
+    }
+    else if (!strcmp(op, "jnz") || !strcmp(op, "jne"))
+    {
+        return oplabelCalc("75", label);
+    }
+    else
+    {
+        printf("Not defined");
+    }
+    return 0;
+}
