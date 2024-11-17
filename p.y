@@ -90,8 +90,13 @@ inst: OPC				{loct += onlyOp($1);}
 	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR {loct += getYoo2($1,$4,$6 * -1);}
 	| OPC DWORD LEFTBR REG RIGHTBR COMMA immd {loct += addrRegImmImm($1,$4,(long)NULL,$7);}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR COMMA immd {loct += addrRegImmImm($1,$4,$6,$9);}
-	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA immd {loct += addrRegImmImm($1,$4,$6,$9 * -1);}
-
+	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA immd {loct += addrRegImmImm($1,$4,$6 * -1,$9);}
+	| OPC DWORD LEFTBR REG RIGHTBR COMMA PLUS immd {loct += addrRegImmImm($1,$4,(long)NULL,$8);}
+	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR COMMA PLUS immd {loct += addrRegImmImm($1,$4,$6,$10);}
+	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA PLUS immd {loct += addrRegImmImm($1,$4,$6 * -1, $10);}
+	| OPC DWORD LEFTBR REG RIGHTBR COMMA MINUS immd {loct += addrRegImmImm($1,$4,(long)NULL,$8 * -1);}
+	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR COMMA MINUS immd {loct += addrRegImmImm($1,$4,$6,$10 * -1);}
+	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA MINUS immd {loct += addrRegImmImm($1,$4,$6 * -1, $10 * -1);}
 	;
 
 
