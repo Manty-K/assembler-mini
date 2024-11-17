@@ -648,12 +648,22 @@ int oplabel(char *op, char *label)
     return 0;
 }
 
-int addrRegImmImmCalc(char *opc, int reg, long addrImm, long imm, int colm)
+int addrRegImmImmCalc(char *m8, char *m32, int reg, long addrImm, long imm, int colm)
 {
     int imm8 = isimm8bit(addrImm);
-    int count = 6;
 
-    printf("%s", opc);
+    int is8imm = isimm8bit(imm);
+    int count = 2;
+
+    if (is8imm && m8)
+    {
+        printf("%s", m8);
+    }
+    else
+    {
+        printf("%s", m32);
+    }
+
     int mod;
 
     if (addrImm && imm8)
@@ -669,7 +679,7 @@ int addrRegImmImmCalc(char *opc, int reg, long addrImm, long imm, int colm)
         mod = 0;
     }
 
-    printf("%02lX", getModRM(mod, 0, reg));
+    printf("%02lX", getModRM(mod, reg, colm));
 
     if (addrImm && imm8)
     {
@@ -681,12 +691,17 @@ int addrRegImmImmCalc(char *opc, int reg, long addrImm, long imm, int colm)
         printf("%08X", (unsigned int)addrImm);
         count += 4;
     }
+
+    if (is8imm && m8)
+    {
+        printf("%02X", (unsigned int)imm);
+        count++;
+    }
     else
     {
-        printf("00");
+        printf("%08X", (unsigned int)imm);
+        count += 4;
     }
-
-    printf("%08X", (unsigned int)imm);
 
     return count;
 }
@@ -697,7 +712,23 @@ int addrRegImmImm(char *op, char *reg, long addrImm, long imm)
 
     if (!strcmp(op, "mov"))
     {
-        return addrRegImmImmCalc("C7", regval, addrImm, imm, 0);
+        return addrRegImmImmCalc(NULL, "C7", regval, addrImm, imm, 0);
+    }
+    else if (!strcmp(op, "add"))
+    {
+        return addrRegImmImmCalc("83", "81", regval, addrImm, imm, 0);
+    }
+    else if (!strcmp(op, "sub"))
+    {
+        return addrRegImmImmCalc("83", "81", regval, addrImm, imm, 5);
+    }
+    else if (!strcmp(op, "xor"))
+    {
+        return addrRegImmImmCalc("83", "81", regval, addrImm, imm, 6);
+    }
+    else if (!strcmp(op, "cmp"))
+    {
+        return addrRegImmImmCalc("83", "81", regval, addrImm, imm, 7);
     }
     else
     {
