@@ -38,6 +38,11 @@ char *modrm_table[][8] = {
     {"F8", "F9", "FA", "FB", "FC", "FD", "FE", "FF"},
 };
 
+int isimm8bit(long imm)
+{
+    return imm >= -128 && imm <= 127;
+}
+
 long getModRM(int mod, int dest, int src)
 {
     return longFromHex(modrm_table[8 * mod + src][dest]);
@@ -153,8 +158,10 @@ int getYoo(char *opc, char *reg)
     return 0;
 }
 
-int memAddr(char *op, int colm, int regid)
+int memAddr(char *op, int colm, int regid, long imm)
 {
+    int imm8 = isimm8bit(imm);
+
     if (regid > 15 || regid == 12)
     {
         puts("Not supported");
@@ -171,22 +178,57 @@ int memAddr(char *op, int colm, int regid)
 
     if (regid == 4) // esp
     {
-        printf("%02lX", getModRM(0, regid, colm));
+        if (imm && imm8)
+        {
+            printf("%02lX", getModRM(1, regid, colm));
+        }
+        else if (imm)
+        {
+            printf("%02lX", getModRM(2, regid, colm));
+        }
+        else
+        {
+            printf("%02lX", getModRM(0, regid, colm));
+        }
+
         printf("24");
         count++;
     }
     else if (regid == 5) // ebp
     {
-        printf("%02lX", getModRM(1, regid, colm));
-        printf("00");
-        count++;
+        if (imm && imm8)
+        {
+            printf("%02lX", getModRM(1, regid, colm));
+        }
+        else if (imm)
+        {
+            printf("%02lX", getModRM(2, regid, colm));
+        }
+        else
+        {
+            printf("%02lX", getModRM(1, regid, colm));
+            printf("00");
+            count++;
+        }
     }
     else if (regid < 8)
     {
-        printf("%02lX", getModRM(0, regid, colm));
+        if (imm && imm8)
+        {
+            printf("%02lX", getModRM(1, regid, colm));
+        }
+        else if (imm)
+        {
+            printf("%02lX", getModRM(2, regid, colm));
+        }
+        else
+        {
+            printf("%02lX", getModRM(0, regid, colm));
+        }
     }
     else if (regid == 14 || regid == 15)
     {
+
         printf("%02lX", getModRM(0, regid % 8 - 2, colm));
     }
     else if (regid == 13)
@@ -200,32 +242,44 @@ int memAddr(char *op, int colm, int regid)
         printf("Invalid reg %d", regid);
         return 0;
     }
+
+    if (imm && imm8)
+    {
+
+        printf("%02X", (unsigned char)imm);
+        count++;
+    }
+    else if (imm)
+    {
+        printf("%08X", (unsigned int)imm);
+        count += 4;
+    }
     return count;
 }
 
-int getYoo2(char *opc, char *reg)
+int getYoo2(char *opc, char *reg, long imm)
 {
 
     long regId = getRegId(reg);
     if (!strcmp(opc, "inc"))
     {
-        return memAddr("FF", 0, regId);
+        return memAddr("FF", 0, regId, imm);
     }
     else if (!strcmp(opc, "dec"))
     {
-        return memAddr("FF", 1, regId);
+        return memAddr("FF", 1, regId, imm);
     }
     else if (!strcmp(opc, "div"))
     {
-        return memAddr("FF", 6, regId);
+        return memAddr("FF", 6, regId, imm);
     }
     else if (!strcmp(opc, "mul"))
     {
-        return memAddr("F7", 4, regId);
+        return memAddr("F7", 4, regId, imm);
     }
     else if (!strcmp(opc, "jmp"))
     {
-        return memAddr("FF", 4, regId);
+        return memAddr("FF", 4, regId, imm);
     }
     else
     {
@@ -440,10 +494,6 @@ int opimm(char *op, long imm)
     }
     return 0;
 }
-int isimm8bit(long imm)
-{
-    return imm >= -128 && imm <= 127;
-}
 
 int addrRegRegCalc(char *m8, char *m32, int r1, int r2, long imm)
 {
@@ -535,12 +585,12 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2, long imm)
 
     if (imm && isimm8)
     {
-        printf("%02lX", (unsigned char)imm);
+        printf("%02X", (unsigned char)imm);
         count++;
     }
     else if (imm)
     {
-        printf("%08lX", (unsigned int)imm);
+        printf("%08X", (unsigned int)imm);
         count += 4;
     }
 

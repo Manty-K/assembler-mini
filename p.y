@@ -85,9 +85,9 @@ inst: OPC				{loct += onlyOp($1);}
 	| OPC LEFTBR REG  PLUS immd  RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$8,$5);}
 	| OPC LEFTBR REG  MINUS immd  RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$8,$5 * -1);}
 	| OPC REG COMMA immd {loct += regimm($1,$2,$4);}
-	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4);}
-	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {printf("hmm2");}
-	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR {printf("hmm3");}
+	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4,(long)NULL);}
+	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {loct += getYoo2($1,$4,$6);}
+	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR {loct += getYoo2($1,$4,$6 * -1);}
 	| OPC DWORD LEFTBR REG RIGHTBR COMMA immd {printf("Chal gaya");}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR COMMA immd {printf("Chal gaya2");}
 	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA immd {printf("Chal gaya3");}
