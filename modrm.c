@@ -647,3 +647,62 @@ int oplabel(char *op, char *label)
     }
     return 0;
 }
+
+int addrRegImmImmCalc(char *opc, int reg, long addrImm, long imm, int colm)
+{
+    int imm8 = isimm8bit(addrImm);
+    int count = 6;
+
+    printf("%s", opc);
+    int mod;
+
+    if (addrImm && imm8)
+    {
+        mod = 1;
+    }
+    else if (addrImm)
+    {
+        mod = 2;
+    }
+    else
+    {
+        mod = 0;
+    }
+
+    printf("%02lX", getModRM(mod, 0, reg));
+
+    if (addrImm && imm8)
+    {
+        printf("%02X", (unsigned char)addrImm);
+        count++;
+    }
+    else if (addrImm)
+    {
+        printf("%08X", (unsigned int)addrImm);
+        count += 4;
+    }
+    else
+    {
+        printf("00");
+    }
+
+    printf("%08X", (unsigned int)imm);
+
+    return count;
+}
+
+int addrRegImmImm(char *op, char *reg, long addrImm, long imm)
+{
+    int regval = getRegId(reg);
+
+    if (!strcmp(op, "mov"))
+    {
+        return addrRegImmImmCalc("C7", regval, addrImm, imm, 0);
+    }
+    else
+    {
+        printf("Not defined");
+    }
+
+    return 0;
+}

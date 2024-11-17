@@ -88,9 +88,10 @@ inst: OPC				{loct += onlyOp($1);}
 	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4,(long)NULL);}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {loct += getYoo2($1,$4,$6);}
 	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR {loct += getYoo2($1,$4,$6 * -1);}
-	| OPC DWORD LEFTBR REG RIGHTBR COMMA immd {printf("Chal gaya");}
-	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR COMMA immd {printf("Chal gaya2");}
-	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA immd {printf("Chal gaya3");}
+	| OPC DWORD LEFTBR REG RIGHTBR COMMA immd {loct += addrRegImmImm($1,$4,(long)NULL,$7);}
+	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR COMMA immd {loct += addrRegImmImm($1,$4,$6,$9);}
+	| OPC DWORD LEFTBR REG MINUS immd RIGHTBR COMMA immd {loct += addrRegImmImm($1,$4,$6,$9 * -1);}
+
 	;
 
 

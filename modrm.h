@@ -9,3 +9,4 @@ int onlyOp(char *op);
 int opimm(char *op, long imm);
 int addrRegReg(char *op, char *r1, char *r2, long imm);
 int oplabel(char *op, char *label);
+int addrRegImmImm(char *op, char *reg, long addrImm, long imm);
