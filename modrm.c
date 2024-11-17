@@ -440,9 +440,14 @@ int opimm(char *op, long imm)
     }
     return 0;
 }
-
-int addrRegRegCalc(char *m8, char *m32, int r1, int r2)
+int isimm8bit(long imm)
 {
+    return imm >= -128 && imm <= 127;
+}
+
+int addrRegRegCalc(char *m8, char *m32, int r1, int r2, long imm)
+{
+    int isimm8 = isimm8bit(imm);
     int count = 1;
 
     if (r2 > 7 && r2 < 16)
@@ -470,16 +475,48 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2)
 
     if (r1 < 16 && r2 < 16) // r1: 32,16   r2: 32,16
     {
-        if (r1 == 14 || r1 == 15)
+        if (imm && isimm8)
         {
-            printf("%02lX", getModRM(0, r1 % 8, r2 % 8) - 2);
-            count++;
-        }
+            if (r1 == 14 || r1 == 15)
+            {
+                printf("%02lX", getModRM(1, r1 % 8, r2 % 8) - 2);
+                count++;
+            }
 
+            else
+            {
+                printf("%02lX", getModRM(1, r1 % 8, r2 % 8));
+                count++;
+            }
+        }
+        else if (imm)
+        {
+            if (r1 == 14 || r1 == 15)
+            {
+                printf("%02lX", getModRM(2, r1 % 8, r2 % 8) - 2);
+                count++;
+            }
+
+            else
+            {
+                printf("%02lX", getModRM(2, r1 % 8, r2 % 8));
+                count++;
+            }
+        }
         else
         {
-            printf("%02lX", getModRM(0, r1 % 8, r2 % 8));
-            count++;
+
+            if (r1 == 14 || r1 == 15)
+            {
+                printf("%02lX", getModRM(0, r1 % 8, r2 % 8) - 2);
+                count++;
+            }
+
+            else
+            {
+                printf("%02lX", getModRM(0, r1 % 8, r2 % 8));
+                count++;
+            }
         }
     }
     else if (r1 < 8 && r2 > 15) // r1 32 bit, r1 : 8 bit
@@ -496,6 +533,17 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2)
         count++;
     }
 
+    if (imm && isimm8)
+    {
+        printf("%02lX", (unsigned char)imm);
+        count++;
+    }
+    else if (imm)
+    {
+        printf("%08lX", (unsigned int)imm);
+        count += 4;
+    }
+
     if (r1 == 4)
     {
         printf("24");
@@ -504,14 +552,14 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2)
     return count;
 }
 
-int addrRegReg(char *op, char *r1, char *r2)
+int addrRegReg(char *op, char *r1, char *r2, long imm)
 {
     int r1val = getRegId(r1);
     int r2val = getRegId(r2);
 
     if (!strcmp(op, "mov"))
     {
-        return addrRegRegCalc("88", "89", r1val, r2val);
+        return addrRegRegCalc("88", "89", r1val, r2val, imm);
     }
     else
     {

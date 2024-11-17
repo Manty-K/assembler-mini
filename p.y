@@ -81,9 +81,9 @@ inst: OPC				{loct += onlyOp($1);}
 	| OPC LABEL			{loct += oplabel($1,$2);}
 	| OPC REG 			{loct += getYoo($1,$2);}
 	| OPC REG COMMA REG {loct += tworeg($1,$2,$4);}
-	| OPC LEFTBR REG RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$6);}
-	| OPC LEFTBR REG  PLUS immd  RIGHTBR COMMA REG {printf("++");}
-	| OPC LEFTBR REG  MINUS immd  RIGHTBR COMMA REG {printf("--");}
+	| OPC LEFTBR REG RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$6, (long) NULL);}
+	| OPC LEFTBR REG  PLUS immd  RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$8,$5);}
+	| OPC LEFTBR REG  MINUS immd  RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$8,$5 * -1);}
 	| OPC REG COMMA immd {loct += regimm($1,$2,$4);}
 	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4);}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {printf("hmm2");}
