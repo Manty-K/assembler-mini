@@ -72,7 +72,7 @@ text_lines: text_line NEWLINE {newline();} text_lines
 	;
 
 text_line: GLOBAL LABEL
-	|{printLocation(loct);} LABEL inst 
+	|{printLocation(loct);} LABEL {addLabel($2,loct,'t');} inst
 	|{printLocation(loct);} inst
 	;
 
