@@ -764,3 +764,47 @@ int addrRegImmImm(char *op, char *reg, long addrImm, long imm)
 
     return 0;
 }
+
+int regLblCalc(char *rd, int reg, long label, int colm, char *opc)
+{
+    if (rd != NULL)
+    {
+        long base = longFromHex(rd);
+        long offset = base + (long)reg;
+
+        printf("%02lX", (unsigned char)offset);
+        printf("[%08X]", (unsigned int)label);
+        return 5;
+    }
+    else if (opc != NULL)
+    {
+        printf("%s", opc);
+        printf("%02lX", getModRM(3, reg, 0));
+        printf("[%08X]", (unsigned int)label);
+        return 6;
+    }
+    else
+    {
+        printf("Either column or rd needs to be null");
+    }
+}
+
+int regLbl(char *op, char *reg, char *label)
+{
+    long loc = getLblLoc(label);
+    int regVal = getRegId(reg);
+
+    if (!strcmp(op, "mov"))
+    {
+        return regLblCalc("B8", regVal, loc, NULL, NULL);
+    }
+    else if (!strcmp(op, "add"))
+    {
+        return regLblCalc(NULL, regVal, loc, 0, "81");
+    }
+    else
+    {
+        printf("Not defined");
+    }
+    return 0;
+}

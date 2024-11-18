@@ -10,3 +10,4 @@ int opimm(char *op, long imm);
 int addrRegReg(char *op, char *r1, char *r2, long imm);
 int oplabel(char *op, char *label, long current);
 int addrRegImmImm(char *op, char *reg, long addrImm, long imm);
+int regLbl(char *op, char *reg, char *label);
