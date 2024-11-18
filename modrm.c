@@ -797,7 +797,7 @@ int regLblCalc(char *rd8, char *rd32, int reg, long label, int colm, char *m8, c
             }
         }
 
-        printf("%02lX", (unsigned char)offset);
+        printf("%02X", (unsigned char)offset);
         count++;
     }
     else if (m32 != NULL)
@@ -876,7 +876,7 @@ int regLbl(char *op, char *reg, char *label)
 
     if (!strcmp(op, "mov"))
     {
-        return regLblCalc("B0", "B8", regVal, loc, NULL, NULL, NULL, NULL, NULL);
+        return regLblCalc("B0", "B8", regVal, loc, -1, NULL, NULL, NULL, NULL);
     }
     else if (!strcmp(op, "add"))
     {
