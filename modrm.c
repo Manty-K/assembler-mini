@@ -765,28 +765,108 @@ int addrRegImmImm(char *op, char *reg, long addrImm, long imm)
     return 0;
 }
 
-int regLblCalc(char *rd, int reg, long label, int colm, char *opc)
+int regLblCalc(char *rd8, char *rd32, int reg, long label, int colm, char *m8, char *m32, char *eax8, char *eax32)
 {
-    if (rd != NULL)
+    int count = 0;
+    if (reg > 7 && reg < 15)
     {
-        long base = longFromHex(rd);
-        long offset = base + (long)reg;
+        printf("66");
+        count++;
+    }
+    if (rd32 != NULL && rd8 != NULL)
+    {
+        long base;
+        long offset;
+
+        if (reg < 16)
+        {
+            base = longFromHex(rd32);
+            offset = base + ((long)reg % 8);
+        }
+        else
+        {
+            base = longFromHex(rd8);
+
+            if (reg >= 20)
+            {
+                offset = base + ((long)reg % 4);
+            }
+            else
+            {
+                offset = base + ((long)reg % 4) + 4;
+            }
+        }
 
         printf("%02lX", (unsigned char)offset);
-        printf("[%08X]", (unsigned int)label);
-        return 5;
+        count++;
     }
-    else if (opc != NULL)
+    else if (m32 != NULL)
     {
-        printf("%s", opc);
-        printf("%02lX", getModRM(3, reg, 0));
-        printf("[%08X]", (unsigned int)label);
-        return 6;
+
+        if (reg == 0 || reg == 8 || reg == 20)
+        {
+            if (reg == 20)
+            {
+                printf("%s", eax8);
+            }
+            else
+            {
+                printf("%s", eax32);
+            }
+            count++;
+        }
+        else
+        {
+            if (reg < 16)
+            {
+                printf("%s", m32);
+            }
+            else
+            {
+                printf("%s", m8);
+            }
+
+            count++;
+            if (reg < 16)
+            {
+                printf("%02lX", getModRM(3, reg % 8, 0));
+            }
+            else
+            {
+                if (reg >= 20)
+                {
+                    printf("%02lX", getModRM(3, reg % 4, 0));
+                }
+                else
+                {
+                    printf("%02lX", getModRM(3, reg % 4 + 4, 0));
+                }
+            }
+
+            count++;
+        }
     }
     else
     {
         printf("Either column or rd needs to be null");
+        return 0;
     }
+    if (reg < 8)
+    {
+        printf("[%08X]", (unsigned int)label);
+        count += 4;
+    }
+    else if (reg > 7 && reg < 16)
+    {
+        printf("[%04X]", (unsigned int)label);
+        count += 2;
+    }
+    else
+    {
+        printf("[%02X]", (unsigned int)label);
+        count += 1;
+    }
+    return count;
 }
 
 int regLbl(char *op, char *reg, char *label)
@@ -796,11 +876,11 @@ int regLbl(char *op, char *reg, char *label)
 
     if (!strcmp(op, "mov"))
     {
-        return regLblCalc("B8", regVal, loc, NULL, NULL);
+        return regLblCalc("B0", "B8", regVal, loc, NULL, NULL, NULL, NULL, NULL);
     }
     else if (!strcmp(op, "add"))
     {
-        return regLblCalc(NULL, regVal, loc, 0, "81");
+        return regLblCalc(NULL, NULL, regVal, loc, 0, "80", "81", "04", "05");
     }
     else
     {
