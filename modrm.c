@@ -473,11 +473,29 @@ int onlyOp(char *op)
         return 0;
     }
 }
-int opimmcalc(char *opc, long imm)
+int opimmcalc(char *opc, long imm, int m32Allowed)
 {
     printf("%s", opc);
-    printf("(%08lX)", imm);
-    return 5;
+    if (m32Allowed)
+    {
+        printf("(%08X)", (unsigned int)imm);
+        return 5;
+    }
+    else
+    {
+        if (imm >= 5 && imm <= 255)
+        {
+            printf("%02X", (unsigned char)imm);
+            return 2;
+        }
+        else
+        {
+            printf("Exceed size");
+            return 0;
+        }
+    }
+
+    return 0;
 }
 
 int opimm(char *op, long imm)
@@ -486,7 +504,12 @@ int opimm(char *op, long imm)
     if (!strcmp(op, "jmp"))
     {
 
-        return opimmcalc("E9", imm);
+        return opimmcalc("E9", imm, 1);
+    }
+    else if (!strcmp(op, "int"))
+    {
+
+        return opimmcalc("CD", imm, 0);
     }
     else
     {

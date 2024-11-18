@@ -85,6 +85,8 @@ instg: {printLocation(loct);}inst
 
 inst: OPC				{loct += onlyOp($1);}
 	| OPC immd			{loct += opimm($1,$2);}
+	| OPC PLUS immd			{loct += opimm($1,$3);}
+	| OPC MINUS immd			{loct += opimm($1,$3 * -1);}
 	| OPC LABEL			{loct += oplabel($1,$2,loct);}
 	| OPC REG 			{loct += getYoo($1,$2);}
 	| OPC REG COMMA REG {loct += tworeg($1,$2,$4);}

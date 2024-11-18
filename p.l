@@ -42,7 +42,7 @@ res[bwdq]			{
 \]					{return RIGHTBR;};
 
 
-MOV|ADD|INC|DEC|DIV|MUL|JMP|SUB|XOR|CMP|AND|OR|NOT|NEG|RET|NOP|JNE|JE|JNZ|JZ					{lowercase(yytext); yylval.s = strdup(yytext); return OPC;}
+MOV|ADD|INC|DEC|DIV|MUL|JMP|SUB|XOR|CMP|AND|OR|NOT|NEG|RET|NOP|JNE|JE|JNZ|JZ|INT					{lowercase(yytext); yylval.s = strdup(yytext); return OPC;}
 
 global				{return GLOBAL;}
 
