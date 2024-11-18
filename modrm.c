@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "utils.h"
+#include "symb.h"
 #include <ctype.h>
 #include <string.h>
 char *modrm_table[][8] = {
@@ -618,28 +619,31 @@ int addrRegReg(char *op, char *r1, char *r2, long imm)
 
     return 0;
 }
-int oplabelCalc(char *opc, char *label)
+int oplabelCalc(char *opc, long location)
 {
+
     printf("%s", opc);
-    printf("--");
+    printf("%02X", (unsigned char)location - 2);
 
     return 2;
 }
 
-int oplabel(char *op, char *label)
+int oplabel(char *op, char *label, long currentLoc)
 {
+    long loc = getLblLoc(label);
+    long relative = loc - currentLoc;
 
     if (!strcmp(op, "jmp"))
     {
-        return oplabelCalc("E9", label);
+        return oplabelCalc("E9", relative);
     }
     else if (!strcmp(op, "jz") || !strcmp(op, "je"))
     {
-        return oplabelCalc("74", label);
+        return oplabelCalc("74", relative);
     }
     else if (!strcmp(op, "jnz") || !strcmp(op, "jne"))
     {
-        return oplabelCalc("75", label);
+        return oplabelCalc("75", relative);
     }
     else
     {

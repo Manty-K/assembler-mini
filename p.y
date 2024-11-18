@@ -1,6 +1,7 @@
 %{
 #include<stdio.h>
 #include<string.h>
+#include<stdlib.h>
 #include "utils.h"
 #include "symb.h"
 #include "modrm.h"
@@ -8,6 +9,8 @@ void yyerror(const char * e);
 int yylex();
 void newline();
 void printLocation(long loc);
+
+int pass;
 
 long locd  = 0; // data LC
 long locb = 0;
@@ -82,7 +85,7 @@ instg: {printLocation(loct);}inst
 
 inst: OPC				{loct += onlyOp($1);}
 	| OPC immd			{loct += opimm($1,$2);}
-	| OPC LABEL			{loct += oplabel($1,$2);}
+	| OPC LABEL			{loct += oplabel($1,$2,loct);}
 	| OPC REG 			{loct += getYoo($1,$2);}
 	| OPC REG COMMA REG {loct += tworeg($1,$2,$4);}
 	| OPC LEFTBR REG RIGHTBR COMMA REG {loct += addrRegReg($1,$3,$6, (long) NULL);}
@@ -119,15 +122,36 @@ void printLocation(long loc){
 }
 
 void yyerror(const char * e){
-
 	printf("Hii: %s\n",e);
 }
 
-int main(){
-	
+int main(int argc, char ** argv){
+	if(argc>1){
+
+		if(!strcmp(argv[1],"1")){
+			pass = 1;
+		}else if(!strcmp(argv[1],"2")){
+			pass = 2;
+		}else{
+			printf("Invalid Pass : %s\n",argv[1]);
+			return 1;			
+		}
+	}else{
+		puts("Pass required");
+			return 1;
+	}
+
+	if(pass == 2){
+		importSymbolTable();
+	}
+
 	yyparse();
-	puts("\n\n");
-	displaySymbolTable();
+
+	if(pass == 1){
+		saveSymbolTable();
+	}
+	//printf("Pass %d done\n",pass);
+
 	return 0;
 
 }
