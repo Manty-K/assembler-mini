@@ -420,7 +420,7 @@ int regimmcalc(char *m8, char *m32, int reg, long immval)
         printf("%02lX", immval);
         count += 1;
     }
-    else if (immval <= 0xFFFF && reg < 16)
+    else if (immval <= 0xFFFF && reg < 16 && reg > 7)
     {
         printf("%04lX", immval);
         count += 2;
