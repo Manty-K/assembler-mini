@@ -504,7 +504,7 @@ int opimm(char *op, long imm)
     if (!strcmp(op, "jmp"))
     {
 
-        return opimmcalc("E9", imm, 1);
+        return opimmcalc("EB", imm, 1);
     }
     else if (!strcmp(op, "int"))
     {
@@ -658,7 +658,7 @@ int oplabel(char *op, char *label, long currentLoc)
 
     if (!strcmp(op, "jmp"))
     {
-        return oplabelCalc("E9", relative);
+        return oplabelCalc("EB", relative);
     }
     else if (!strcmp(op, "jz") || !strcmp(op, "je"))
     {
