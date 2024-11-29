@@ -918,7 +918,7 @@ int regLblAddrCalc(char *opc, char *eaxop, int reg, long location, int isImm)
     return count;
 }
 
-int regLblAddr(char *op, char *reg, char *label, long imm)
+int regLblAddr(char *op, char *reg, char *label, long imm, long offset)
 {
     long loc;
 
@@ -928,7 +928,14 @@ int regLblAddr(char *op, char *reg, char *label, long imm)
     }
     else
     {
-        loc = getLblLoc(label);
+        if (offset == 0)
+        {
+            loc = getLblLoc(label);
+        }
+        else
+        {
+            loc = getLblLoc(label) + offset;
+        }
     }
 
     int regVal = getRegId(reg);
@@ -947,20 +954,32 @@ int regLblAddr(char *op, char *reg, char *label, long imm)
     return 0;
 }
 
-int regAddrCalc(char *opc, int reg1, int reg2)
+int regAddrCalc(char *opc, int reg1, int reg2, long imm)
 {
+    int count = 1;
     printf(opc);
-    printf("%02lX", getModRM(0, reg2, reg1));
-    return 2;
+    if (imm == NULL)
+    {
+        printf("%02lX", getModRM(0, reg2, reg1));
+        count += 1;
+    }
+    else
+    {
+        printf("%02lX", getModRM(1, reg2, reg1));
+        printf("%02X", (unsigned char)imm);
+
+        count += 2;
+    }
+    return count;
 }
 
-int regAddr(char *op, char *reg1, char *reg2)
+int regAddr(char *op, char *reg1, char *reg2, long imm)
 {
     long loc;
     int reg1Val = getRegId(reg1);
     int reg2Val = getRegId(reg2);
     if (!strcmp(op, "mov"))
     {
-        return regAddrCalc("8B", reg1Val, reg2Val);
+        return regAddrCalc("8B", reg1Val, reg2Val, imm);
     }
 }

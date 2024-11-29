@@ -97,9 +97,14 @@ inst: OPC				{loct += onlyOp($1);}
 	| OPC REG COMMA PLUS immd {loct += regimm($1,$2,$5);}
 	| OPC REG COMMA MINUS immd {loct += regimm($1,$2,$5 * -1);}
 	| OPC REG COMMA LABEL {loct += regLbl($1,$2,$4);}
-	| OPC REG COMMA LEFTBR LABEL RIGHTBR {loct += regLblAddr($1,$2,$5,(long) NULL);}
-	| OPC REG COMMA LEFTBR immd RIGHTBR {loct += regLblAddr($1,$2,NULL,$5);}
-	| OPC REG COMMA LEFTBR  REG RIGHTBR {loct += regAddr($1,$2,$5);}
+	| OPC REG COMMA LEFTBR LABEL RIGHTBR {loct += regLblAddr($1,$2,$5,(long) NULL,0);}
+	| OPC REG COMMA LEFTBR LABEL PLUS immd RIGHTBR {loct += regLblAddr($1,$2,$5,(long) NULL,$7);}
+	| OPC REG COMMA LEFTBR LABEL MINUS immd RIGHTBR {loct += regLblAddr($1,$2,$5,(long) NULL,$7 * -1);}
+
+	| OPC REG COMMA LEFTBR immd RIGHTBR {loct += regLblAddr($1,$2,NULL,$5,0);}
+	| OPC REG COMMA LEFTBR  REG RIGHTBR {loct += regAddr($1,$2,$5, (long) NULL);}
+	| OPC REG COMMA LEFTBR  REG PLUS immd RIGHTBR {loct += regAddr($1,$2,$5,$7);}
+	| OPC REG COMMA LEFTBR  REG MINUS immd RIGHTBR {loct += regAddr($1,$2,$5,$7 * -1);}
 
 	| OPC DWORD LEFTBR REG RIGHTBR    {loct += getYoo2($1,$4,(long)NULL);}
 	| OPC DWORD LEFTBR REG PLUS immd RIGHTBR {loct += getYoo2($1,$4,$6);}
