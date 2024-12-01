@@ -65,19 +65,19 @@ int getSingReg(int regId, int colm, char *m8, char *m32, int rd)
     {
         if (!rd)
         {
-            printf("%02lX", getModRM(3, regId % 8, colm));
+            printf("%02X", getModRM(3, regId % 8, colm));
             count++;
         }
     }
     else if (regId < 20 && regId > 15)
     {
 
-        printf("%02lX", getModRM(3, (regId % 4) + 4, colm));
+        printf("%02X", getModRM(3, (regId % 4) + 4, colm));
         count++;
     }
     else if (regId > 20 && regId < 24)
     {
-        printf("%02lX", getModRM(3, regId % 4, colm));
+        printf("%02X", getModRM(3, regId % 4, colm));
         count++;
     }
 
@@ -147,15 +147,15 @@ int memAddr(char *op, int colm, int regid, long imm)
     {
         if (imm && imm8)
         {
-            printf("%02lX", getModRM(1, regid, colm));
+            printf("%02X", getModRM(1, regid, colm));
         }
         else if (imm)
         {
-            printf("%02lX", getModRM(2, regid, colm));
+            printf("%02X", getModRM(2, regid, colm));
         }
         else
         {
-            printf("%02lX", getModRM(0, regid, colm));
+            printf("%02X", getModRM(0, regid, colm));
         }
 
         printf("24");
@@ -165,15 +165,15 @@ int memAddr(char *op, int colm, int regid, long imm)
     {
         if (imm && imm8)
         {
-            printf("%02lX", getModRM(1, regid, colm));
+            printf("%02X", getModRM(1, regid, colm));
         }
         else if (imm)
         {
-            printf("%02lX", getModRM(2, regid, colm));
+            printf("%02X", getModRM(2, regid, colm));
         }
         else
         {
-            printf("%02lX", getModRM(1, regid, colm));
+            printf("%02X", getModRM(1, regid, colm));
             printf("00");
             count++;
         }
@@ -182,25 +182,25 @@ int memAddr(char *op, int colm, int regid, long imm)
     {
         if (imm && imm8)
         {
-            printf("%02lX", getModRM(1, regid, colm));
+            printf("%02X", getModRM(1, regid, colm));
         }
         else if (imm)
         {
-            printf("%02lX", getModRM(2, regid, colm));
+            printf("%02X", getModRM(2, regid, colm));
         }
         else
         {
-            printf("%02lX", getModRM(0, regid, colm));
+            printf("%02X", getModRM(0, regid, colm));
         }
     }
     else if (regid == 14 || regid == 15)
     {
 
-        printf("%02lX", getModRM(0, regid % 8 - 2, colm));
+        printf("%02X", getModRM(0, regid % 8 - 2, colm));
     }
     else if (regid == 13)
     {
-        printf("%02lX", getModRM(1, 6, colm));
+        printf("%02X", getModRM(1, 6, colm));
         printf("00");
         count++;
     }
@@ -307,7 +307,7 @@ int tworegcalc(char *m8, char *m32, int r1, int r2)
     /// rest
     if (r1 < 16)
     {
-        printf("%02lX", getModRM(3, r1 % 8, r2 % 8));
+        printf("%02X", getModRM(3, r1 % 8, r2 % 8));
     }
     else
     {
@@ -519,13 +519,13 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2, long imm)
         {
             if (r1 == 14 || r1 == 15)
             {
-                printf("%02lX", getModRM(1, r1 % 8, r2 % 8) - 2);
+                printf("%02X", getModRM(1, r1 % 8, r2 % 8) - 2);
                 count++;
             }
 
             else
             {
-                printf("%02lX", getModRM(1, r1 % 8, r2 % 8));
+                printf("%02X", getModRM(1, r1 % 8, r2 % 8));
                 count++;
             }
         }
@@ -533,13 +533,13 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2, long imm)
         {
             if (r1 == 14 || r1 == 15)
             {
-                printf("%02lX", getModRM(2, r1 % 8, r2 % 8) - 2);
+                printf("%02X", getModRM(2, r1 % 8, r2 % 8) - 2);
                 count++;
             }
 
             else
             {
-                printf("%02lX", getModRM(2, r1 % 8, r2 % 8));
+                printf("%02X", getModRM(2, r1 % 8, r2 % 8));
                 count++;
             }
         }
@@ -548,13 +548,13 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2, long imm)
 
             if (r1 == 14 || r1 == 15)
             {
-                printf("%02lX", getModRM(0, r1 % 8, r2 % 8) - 2);
+                printf("%02X", getModRM(0, r1 % 8, r2 % 8) - 2);
                 count++;
             }
 
             else
             {
-                printf("%02lX", getModRM(0, r1 % 8, r2 % 8));
+                printf("%02X", getModRM(0, r1 % 8, r2 % 8));
                 count++;
             }
         }
@@ -563,11 +563,11 @@ int addrRegRegCalc(char *m8, char *m32, int r1, int r2, long imm)
     {
         if (r2 >= 20)
         {
-            printf("%02lX", getModRM(0, r1, r2 % 4));
+            printf("%02X", getModRM(0, r1, r2 % 4));
         }
         else
         {
-            printf("%02lX", getModRM(0, r1, r2 % 4 + 4));
+            printf("%02X", getModRM(0, r1, r2 % 4 + 4));
         }
 
         count++;
@@ -672,7 +672,7 @@ int addrRegImmImmCalc(char *m8, char *m32, int reg, long addrImm, long imm, int 
         mod = 0;
     }
 
-    printf("%02lX", getModRM(mod, reg, colm));
+    printf("%02X", getModRM(mod, reg, colm));
 
     if (addrImm && imm8)
     {
@@ -795,17 +795,17 @@ int regLblCalc(char *rd8, char *rd32, int reg, long label, int colm, char *m8, c
             count++;
             if (reg < 16)
             {
-                printf("%02lX", getModRM(3, reg % 8, 0));
+                printf("%02X", getModRM(3, reg % 8, 0));
             }
             else
             {
                 if (reg >= 20)
                 {
-                    printf("%02lX", getModRM(3, reg % 4, 0));
+                    printf("%02X", getModRM(3, reg % 4, 0));
                 }
                 else
                 {
-                    printf("%02lX", getModRM(3, reg % 4 + 4, 0));
+                    printf("%02X", getModRM(3, reg % 4 + 4, 0));
                 }
             }
 
@@ -866,18 +866,18 @@ int regLblAddrCalc(char *opc, char *eaxop, int reg, long location, int isImm)
     }
     else
     {
-        printf(opc);
-        printf("%02lX", getModRM(0, 5, reg));
+        printf("%s", opc);
+        printf("%02X", getModRM(0, 5, reg));
         count += 2;
     }
 
     if (isImm)
     {
-        printf("%08X", location);
+        printf("%08lX", location);
     }
     else
     {
-        printf("[%08X]", location);
+        printf("[%08lX]", location);
     }
     count += 4;
 
@@ -926,12 +926,12 @@ int regAddrCalc(char *opc, int reg1, int reg2, long imm)
     printf("%s", opc);
     if (imm == 0)
     {
-        printf("%02lX", getModRM(0, reg2, reg1));
+        printf("%02X", getModRM(0, reg2, reg1));
         count += 1;
     }
     else
     {
-        printf("%02lX", getModRM(1, reg2, reg1));
+        printf("%02X", getModRM(1, reg2, reg1));
         printf("%02X", (unsigned char)imm);
 
         count += 2;
