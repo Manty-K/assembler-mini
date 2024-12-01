@@ -1,22 +1,30 @@
+# Assembler
+
+This program generates a listing file from assembly code, similar to NASM. It uses **Flex** and **Bison** for parsing.
 
 
-## Reference
+## Quick Start
 
-| regs | binary | decimal |
-|------|--------|---------|
-| eax  | 000    | 0       |
-| ecx  | 001    | 1       |
-| edx  | 010    | 2       |
-| ebx  | 011    | 3       |
-| esp  | 100    | 4       |
-| ebp  | 101    | 5       |
-| esi  | 110    | 6       |
-| edi  | 111    | 7       |
+1. Open a terminal and run:
+```bash
+make
+```
 
+2. The following files are generated:
+- Listing File: `output.lst`
+- Symbol Table: `p.sym`
 
-EAX (32 bits)
-└── AX (16 bits, lower half of EAX)
-    ├── AH (8 bits, high byte of AX)
-    └── AL (8 bits, low byte of AX)
+By default, the assembler parses the code from `t.s`.
 
 
+
+## Using Your Own Assembly File
+1. Compile the parser by running:
+```bash
+make p.o
+```
+
+2. Provide your assembly file as input:
+```bash
+./p.o < yourfile.s
+```
