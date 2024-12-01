@@ -218,6 +218,7 @@ int getRegId(char *reg)
 	{
 		return 23;
 	}
+	return -1;
 }
 
 void lowercase(char *str)

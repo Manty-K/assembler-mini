@@ -102,7 +102,7 @@ inst: OPC				{loct += onlyOp($1);}
 	| OPC REG COMMA LEFTBR LABEL MINUS immd RIGHTBR {loct += regLblAddr($1,$2,$5,(long) NULL,$7 * -1);}
 
 	| OPC REG COMMA LEFTBR immd RIGHTBR {loct += regLblAddr($1,$2,NULL,$5,0);}
-	| OPC REG COMMA LEFTBR  REG RIGHTBR {loct += regAddr($1,$2,$5, (long) NULL);}
+	| OPC REG COMMA LEFTBR  REG RIGHTBR {loct += regAddr($1,$2,$5, 0);}
 	| OPC REG COMMA LEFTBR  REG PLUS immd RIGHTBR {loct += regAddr($1,$2,$5,$7);}
 	| OPC REG COMMA LEFTBR  REG MINUS immd RIGHTBR {loct += regAddr($1,$2,$5,$7 * -1);}
 

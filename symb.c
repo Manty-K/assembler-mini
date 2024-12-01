@@ -135,7 +135,7 @@ void displaySymbolTable()
     inorder(root);
 }
 
-void inorderS(NODE *node, FILE *fp, char *buffer)
+void inorderS(NODE *node, FILE *fp, char *buffer, size_t sizeOfBuffer)
 {
 
     if (node == NULL)
@@ -143,20 +143,20 @@ void inorderS(NODE *node, FILE *fp, char *buffer)
         return;
     }
 
-    inorderS(node->left, fp, buffer);
+    inorderS(node->left, fp, buffer, sizeOfBuffer);
 
-    memset(buffer, 0, sizeof(buffer));
+    memset(buffer, 0, sizeof(sizeOfBuffer));
     sprintf(buffer, "%08lx\t%s\t%c\n", node->entry->location, node->entry->label, node->entry->section);
     fputs(buffer, fp);
 
-    inorderS(node->right, fp, buffer);
+    inorderS(node->right, fp, buffer, sizeOfBuffer);
 }
 
 void saveSymbolTable()
 {
     FILE *fp = fopen("p.sym", "w");
     char *buffer = malloc(100);
-    inorderS(root, fp, buffer);
+    inorderS(root, fp, buffer, 100);
     fclose(fp);
     free(buffer);
 }
