@@ -29,3 +29,5 @@ long longFromBin(char *h);
 int getRegId(char *reg);
 void lowercase(char *str);
 int sameSizeRegs(int r1, int r2);
+void appendToObjStr(char *str);
+void appendToObjVal(char val);

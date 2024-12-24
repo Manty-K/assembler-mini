@@ -16,6 +16,8 @@ long locd  = 0; // data LC
 long locb = 0;
 long loct = 0;
 int size;
+
+FILE * objfp;
 %}
 
 %token SEC_DATA SEC_BSS SEC_TEXT NEWLINE COMMA GLOBAL LEFTBR RIGHTBR PLUS MINUS DWORD
@@ -155,15 +157,20 @@ int main(int argc, char ** argv){
 			return 1;
 	}
 
+	
+
 	if(pass == 2){
 		importSymbolTable();
 	}
+		objfp = fopen("Boom.o","wb");
 
 	yyparse();
 
 	if(pass == 1){
 		saveSymbolTable();
 	}
+
+	fclose(objfp);
 
 	return 0;
 

@@ -6,6 +6,9 @@
 #include "utils.h"
 #include <ctype.h>
 
+extern FILE *objfp;
+extern int pass;
+
 void parsenum(long n, enum ByteType bt)
 {
 
@@ -247,4 +250,45 @@ int sameSizeRegs(int r1, int r2)
 	}
 
 	return 0;
+}
+
+void appendByte(FILE *fp, char val)
+{
+	if (fwrite(&val, 1, 1, fp) != 1)
+		perror("Error writing to file");
+}
+
+unsigned char charFromHex(const char *hex)
+{
+	char *endptr;
+	long value = strtol(hex, &endptr, 16);
+	return (*endptr == '\0' && value >= 0 && value <= 255) ? (unsigned char)value : 0;
+}
+
+void appendHexString(FILE *fp, const char *str)
+{
+	if (strlen(str) % 2 != 0)
+		return;
+	char buffer[3] = {0};
+	for (unsigned int i = 0; i < strlen(str); i += 2)
+	{
+		strncpy(buffer, str + i, 2);
+		appendByte(fp, charFromHex(buffer));
+	}
+}
+
+void appendToObjStr(char *str)
+{
+
+	if (pass == 2)
+	{
+		appendHexString(objfp, str);
+	}
+}
+void appendToObjVal(char val)
+{
+	if (pass == 2)
+	{
+		appendByte(objfp, val);
+	}
 }
