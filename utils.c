@@ -252,10 +252,15 @@ int sameSizeRegs(int r1, int r2)
 	return 0;
 }
 
-void appendByte(FILE *fp, char val)
+int appendByte(FILE *fp, char val)
 {
 	if (fwrite(&val, 1, 1, fp) != 1)
+	{
 		perror("Error writing to file");
+		return -1;
+	}
+
+	return 1;
 }
 
 unsigned char charFromHex(const char *hex)
@@ -265,30 +270,35 @@ unsigned char charFromHex(const char *hex)
 	return (*endptr == '\0' && value >= 0 && value <= 255) ? (unsigned char)value : 0;
 }
 
-void appendHexString(FILE *fp, const char *str)
+int appendHexString(FILE *fp, const char *str)
 {
+	int i = 0;
 	if (strlen(str) % 2 != 0)
-		return;
+		return -1;
 	char buffer[3] = {0};
 	for (unsigned int i = 0; i < strlen(str); i += 2)
 	{
 		strncpy(buffer, str + i, 2);
 		appendByte(fp, charFromHex(buffer));
+		i++;
 	}
+	return i;
 }
 
-void appendToObjStr(char *str)
+int appendToObjStr(char *str)
 {
 
 	if (pass == 2)
 	{
-		appendHexString(objfp, str);
+		return appendHexString(objfp, str);
 	}
+	return -1;
 }
-void appendToObjVal(char val)
+int appendToObjVal(char val)
 {
 	if (pass == 2)
 	{
-		appendByte(objfp, val);
+		return appendByte(objfp, val);
 	}
+	return -1;
 }
