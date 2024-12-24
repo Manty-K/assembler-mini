@@ -164,6 +164,8 @@ int main(int argc, char ** argv){
 	}
 		objfp = fopen("Boom.o","wb");
 
+		 appendToObjStr("4D616E7479"); // Manty
+
 	yyparse();
 
 	if(pass == 1){
