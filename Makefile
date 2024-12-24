@@ -19,4 +19,4 @@ lst:
 	nm t.o
 	
 clean:
-	rm -rf *.tab.* lex.yy.c *.o *.sym *.lst
+	rm -rf *.tab.* lex.yy.c *.o *.sym *.lst *.bin

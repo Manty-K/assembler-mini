@@ -7,3 +7,4 @@ lex.yy.c
 *.out
 *.png
 *.sym
+*.bin
