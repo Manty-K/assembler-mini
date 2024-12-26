@@ -1,6 +1,7 @@
-p: p.o
+p: p.o objgen.o
 	./p.o 1 < t.s > /dev/null && ./p.o 2 < t.s > output.lst && bash -c 'paste output.lst <(sed "s/^/\t\t\t/" t.s) -d " " | nl '
-	awk '/SECTION TEXT/ {found=1} found' output.lst | sed '1d' | cut -f2 -d ' ' > textsection.lst
+	awk '/SECTION TEXT/ {found=1} found' output.lst | sed '1d' | cut -f2 -d ' '|tr -d '[,' |tr -d '],' > textsection.lst
+	./objgen.o textsection.lst textsection.o
  
 p.o: lex.yy.c p.tab.c utils.c symb.c modrm.c
 	gcc p.tab.c lex.yy.c utils.c symb.c modrm.c -lfl -o p.o -Wall
@@ -10,6 +11,9 @@ debug.o: lex.yy.c p.tab.c utils.c symb.c modrm.c
 
 p.tab.c: p.y utils.h
 	bison -d p.y
+
+objgen.o: objgen.c
+	gcc objgen.c -o objgen.o
 
 lex.yy.c: p.l
 	flex p.l
