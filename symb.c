@@ -4,6 +4,7 @@
 #include "symb.h"
 
 extern int pass;
+extern long symbolCount;
 
 typedef struct node
 {
@@ -191,6 +192,8 @@ void importSymbolTable()
         sec = token[0];
 
         addLabel(lbl, hex, sec, value); // TODO: Fix Value Import
+
+        symbolCount++;
     }
     // displaySymbolTable();
 

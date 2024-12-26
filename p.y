@@ -18,6 +18,7 @@ long locd  = 0; // data LC
 long locb = 0;
 long loct = 0;
 int size;
+long symbolCount = 0;
 
 long objByteCounter = strlen(SIGNATURETXT);
 
@@ -188,6 +189,7 @@ int main(int argc, char ** argv){
 			appendToObjStr(SIGNATURE); // Magic
 			objByteCounter +=  appendToObjLong(objByteCounter + 16);		
 			objByteCounter += appendToObjLong(objByteCounter + locd + 8);
+			printf("Symbol Count: %ld\n",symbolCount);
 
 	}
 
