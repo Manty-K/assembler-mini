@@ -5,6 +5,8 @@
 #include "utils.h"
 #include "symb.h"
 #include "modrm.h"
+#define SIGNATURETXT "Manthan Khandale"
+#define SIGNATURE asciiToHexStr(SIGNATURETXT)
 void yyerror(const char * e);
 int yylex();
 void newline();
@@ -16,6 +18,8 @@ long locd  = 0; // data LC
 long locb = 0;
 long loct = 0;
 int size;
+
+long objByteCounter = strlen(SIGNATURETXT);
 
 FILE * objfp;
 %}
@@ -162,14 +166,29 @@ int main(int argc, char ** argv){
 	if(pass == 2){
 		importSymbolTable();
 	}
-		objfp = fopen("Boom.o","wb");
+		objfp = fopen("output.o","wb");
 
-		 appendToObjStr("4D616E7479"); // Manty
+	
+		
+		
+
 
 	yyparse();
+		
+
+
+
+	
 
 	if(pass == 1){
 		saveSymbolTable();
+
+	
+	}else{
+			appendToObjStr(SIGNATURE); // Magic
+			objByteCounter +=  appendToObjLong(objByteCounter + 16);		
+			objByteCounter += appendToObjLong(objByteCounter + locd + 8);
+
 	}
 
 	fclose(objfp);

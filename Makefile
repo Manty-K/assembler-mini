@@ -4,6 +4,8 @@ p: p.o objgen.o
 	awk '/SECTION DATA/ {found=1} found' output.lst | sed '1d' | awk '/SECTION/ {exit} {print}' | cut -f2 -d ' '> datasection.lst
 	./objgen.o textsection.lst textsection.o
 	./objgen.o datasection.lst datasection.o
+	cat datasection.o >> output.o
+	cat textsection.o >> output.o
  
 p.o: lex.yy.c p.tab.c utils.c symb.c modrm.c
 	gcc p.tab.c lex.yy.c utils.c symb.c modrm.c -lfl -o p.o -Wall

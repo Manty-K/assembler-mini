@@ -263,6 +263,17 @@ int appendByte(FILE *fp, char val)
 	return 1;
 }
 
+int appendLong(FILE *fp, long val)
+{
+	if (fwrite(&val, sizeof(long), 1, fp) != 1)
+	{
+		perror("Error writing to file");
+		return -1;
+	}
+
+	return sizeof(long);
+}
+
 unsigned char charFromHex(const char *hex)
 {
 	char *endptr;
@@ -272,17 +283,18 @@ unsigned char charFromHex(const char *hex)
 
 int appendHexString(FILE *fp, const char *str)
 {
-	int i = 0;
+	int i;
 	if (strlen(str) % 2 != 0)
 		return -1;
 	char buffer[3] = {0};
-	for (unsigned int i = 0; i < strlen(str); i += 2)
+	for (i = 0; i < strlen(str); i += 1)
 	{
 		strncpy(buffer, str + i, 2);
 		appendByte(fp, charFromHex(buffer));
 		i++;
 	}
-	return i;
+
+	return i / 2;
 }
 
 int appendToObjStr(char *str)
@@ -301,4 +313,33 @@ int appendToObjVal(char val)
 		return appendByte(objfp, val);
 	}
 	return -1;
+}
+
+long appendToObjLong(long val)
+{
+	if (pass == 2)
+	{
+		return appendLong(objfp, val);
+	}
+	return -1;
+}
+void asciiToHexHelper(const char *asciiStr, char *hexStr)
+{
+	int i;
+	for (i = 0; asciiStr[i] != '\0'; i++)
+	{
+		// Convert each character to its hexadecimal equivalent
+		sprintf(&hexStr[i * 2], "%02X", (unsigned char)asciiStr[i]);
+	}
+	hexStr[i * 2] = '\0'; // Null-terminate the resulting string
+}
+
+char *asciiToHexStr(char *str)
+{
+
+	char *output = calloc(strlen(str) + 1, 2);
+
+	asciiToHexHelper(str, output);
+
+	return output;
 }

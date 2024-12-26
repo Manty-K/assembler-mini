@@ -31,3 +31,4 @@ void lowercase(char *str);
 int sameSizeRegs(int r1, int r2);
 int appendToObjStr(char *str);
 int appendToObjVal(char val);
+char *asciiToHexStr(char *str);

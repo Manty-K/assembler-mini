@@ -326,7 +326,6 @@ int tworegcalc(char *m8, char *m32, int r1, int r2)
     if (r1 > 7 && r1 < 16)
     {
         printf("66");
-        appendToObjStr("66");
         count++;
     }
 
@@ -334,24 +333,20 @@ int tworegcalc(char *m8, char *m32, int r1, int r2)
     if (r1 > 15)
     {
         printf("%s", m8);
-        appendToObjStr(m8);
     }
     else
     {
         printf("%s", m32);
-        appendToObjStr(m32);
     }
 
     /// rest
     if (r1 < 16)
     {
         printf("%02X", getModRM(3, r1 % 8, r2 % 8));
-        appendToObjVal(getModRM(3, r1 % 8, r2 % 8));
     }
     else
     {
         printf("%02lX", r8modrm(r1, r2));
-        appendToObjVal(r8modrm(r1, r2));
     }
     return count;
 }
