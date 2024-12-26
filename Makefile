@@ -30,10 +30,13 @@ objgen.o: objgen.c
 lex.yy.c: p.l
 	flex p.l
 
+SRC = t.s
+OBJ = $(SRC:.s=.o)
+LST = $(SRC:.s=.lst)
 lst:
-	nasm -felf32 t.s -l t.lst
-	cat t.lst
-	nm t.o
+	nasm -felf32 $(SRC) -l $(LST)
+	cat $(LST)
+	nm $(OBJ)
 	
 clean:
 	rm -rf *.tab.* lex.yy.c *.o *.sym *.lst *.bin *.tmp
