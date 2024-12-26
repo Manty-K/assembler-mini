@@ -187,8 +187,10 @@ int main(int argc, char ** argv){
 	
 	}else{
 			appendToObjStr(SIGNATURE); // Magic
-			objByteCounter +=  appendToObjLong(objByteCounter + 16);		
-			objByteCounter += appendToObjLong(objByteCounter + locd + 8);
+			objByteCounter +=  appendToObjLong(objByteCounter + 32);		
+			objByteCounter += appendToObjLong(objByteCounter + locd + 24);
+			objByteCounter += appendToObjLong(objByteCounter + loct +locd + 16);
+			objByteCounter += appendToObjLong( 16 * 3+ locd + loct + symbolCount * 9 + 3);
 			printf("Symbol Count: %ld\n",symbolCount);
 
 	}

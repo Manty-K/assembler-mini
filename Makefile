@@ -4,6 +4,7 @@ p: p.o objgen.o
 	awk '/SECTION DATA/ {found=1} found' output.lst | sed '1d' | awk '/SECTION/ {exit} {print}' | cut -f2 -d ' '> datasection.lst
 	cut -f 3 p.sym  | sed 's/b/02/g' | sed 's/d/01/g'| sed 's/t/03/g' > nums.sym
 	paste nums.sym p.sym | cut -f 1,2,5| tr -d '\t' > symb.tmp
+	cut -f 2 p.sym | sed 's/$$/./g' > symlbl.tmp
 	./objgen.o textsection.lst textsection.o
 	./objgen.o datasection.lst datasection.o
 	./objgen.o symb.tmp symb.bin
@@ -11,6 +12,8 @@ p: p.o objgen.o
 	cat datasection.o >> output.o
 	cat textsection.o >> output.o
 	cat symb.bin >> output.o
+	cat symlbl.tmp >> output.o
+	xxd output.o
  
 p.o: lex.yy.c p.tab.c utils.c symb.c modrm.c
 	gcc p.tab.c lex.yy.c utils.c symb.c modrm.c -lfl -o p.o -Wall
