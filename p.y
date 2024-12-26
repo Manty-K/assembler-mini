@@ -190,7 +190,7 @@ int main(int argc, char ** argv){
 			objByteCounter +=  appendToObjLong(objByteCounter + 32);		
 			objByteCounter += appendToObjLong(objByteCounter + locd + 24);
 			objByteCounter += appendToObjLong(objByteCounter + loct +locd + 16);
-			objByteCounter += appendToObjLong( 16 * 3+ locd + loct + symbolCount * 9 + 3);
+			objByteCounter += appendToObjLong( 16 * 3+ locd + loct + symbolCount * 9 );
 	}
 
 	fclose(objfp);
