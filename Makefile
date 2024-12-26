@@ -1,11 +1,13 @@
 SRC = t.s
 OBJ = $(SRC:.s=.o)
 LST = $(SRC:.s=.lst)
+SYM = $(SRC:.s=.sym)
 
 p: p.o objgen.o
 	./p.o 1 < $(SRC) > /dev/null && ./p.o 2 < $(SRC) > output.lst && bash -c 'paste output.lst <(sed "s/^/\t\t\t/" $(SRC)) -d " " | nl '
 	awk '/SECTION TEXT/ {found=1} found' output.lst | sed '1d' | cut -f2 -d ' '|tr -d '[,' |tr -d '],' > textsection.tmp
 	awk '/SECTION DATA/ {found=1} found' output.lst | sed '1d' | awk '/SECTION/ {exit} {print}' | cut -f2 -d ' '> datasection.tmp
+	cp p.sym $(SYM)
 	cut -f 3 p.sym  | sed 's/b/02/g' | sed 's/d/01/g'| sed 's/t/03/g' > nums.tmp
 	paste nums.tmp p.sym | cut -f 1,2,5| tr -d '\t' > symb.tmp
 	cut -f 2 p.sym | sed 's/$$/./g' > symlbl.tmp
