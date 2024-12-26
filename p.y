@@ -191,8 +191,6 @@ int main(int argc, char ** argv){
 			objByteCounter += appendToObjLong(objByteCounter + locd + 24);
 			objByteCounter += appendToObjLong(objByteCounter + loct +locd + 16);
 			objByteCounter += appendToObjLong( 16 * 3+ locd + loct + symbolCount * 9 + 3);
-			printf("Symbol Count: %ld\n",symbolCount);
-
 	}
 
 	fclose(objfp);
