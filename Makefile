@@ -2,6 +2,8 @@ p: p.o objgen.o
 	./p.o 1 < t.s > /dev/null && ./p.o 2 < t.s > output.lst && bash -c 'paste output.lst <(sed "s/^/\t\t\t/" t.s) -d " " | nl '
 	awk '/SECTION TEXT/ {found=1} found' output.lst | sed '1d' | cut -f2 -d ' '|tr -d '[,' |tr -d '],' > textsection.lst
 	awk '/SECTION DATA/ {found=1} found' output.lst | sed '1d' | awk '/SECTION/ {exit} {print}' | cut -f2 -d ' '> datasection.lst
+	cut -f 3 p.sym  | sed 's/b/2/g' | sed 's/d/1/g'| sed 's/t/3/g' > nums.sym
+	paste nums.sym p.sym | cut -f 1,2,4 > symb.tmp
 	./objgen.o textsection.lst textsection.o
 	./objgen.o datasection.lst datasection.o
 	cat datasection.o >> output.o
@@ -28,5 +30,5 @@ lst:
 	nm t.o
 	
 clean:
-	rm -rf *.tab.* lex.yy.c *.o *.sym *.lst *.bin
+	rm -rf *.tab.* lex.yy.c *.o *.sym *.lst *.bin *.tmp
 

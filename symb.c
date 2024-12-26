@@ -53,7 +53,7 @@ long getLblLoc(char *label)
     return -1;
 }
 
-void addLabel(char *label, long location, char section)
+void addLabel(char *label, long location, char section, long value)
 {
     // if (pass != 1)
     // {
@@ -68,6 +68,7 @@ void addLabel(char *label, long location, char section)
         strcpy(e->label, label);
         e->location = location;
         e->section = section;
+        e->value = value;
         NODE *n = malloc(sizeof(NODE));
         n->entry = e;
         n->left = n->right = NULL;
@@ -102,6 +103,7 @@ void addLabel(char *label, long location, char section)
         strcpy(e->label, label);
         e->location = location;
         e->section = section;
+        e->value = value;
         NODE *n = malloc(sizeof(NODE));
         n->entry = e;
         n->left = n->right = NULL;
@@ -124,13 +126,13 @@ void inorder(NODE *node)
         return;
     }
     inorder(node->left);
-    printf("%08lx\t%s\t\t%c\n", node->entry->location, node->entry->label, node->entry->section);
+    printf("%08lx\t%s\t\t%c\t%ld\n", node->entry->location, node->entry->label, node->entry->section, node->entry->value);
     inorder(node->right);
 }
 void displaySymbolTable()
 {
     puts("Symbol Table");
-    puts("Loc\t\tLabel\t\tSection");
+    puts("Loc\t\tLabel\t\tSection\t\tValue");
     puts("--------------------------------------");
     inorder(root);
 }
@@ -146,7 +148,7 @@ void inorderS(NODE *node, FILE *fp, char *buffer, size_t sizeOfBuffer)
     inorderS(node->left, fp, buffer, sizeOfBuffer);
 
     memset(buffer, 0, sizeof(sizeOfBuffer));
-    sprintf(buffer, "%08lx\t%s\t%c\n", node->entry->location, node->entry->label, node->entry->section);
+    sprintf(buffer, "%08lx\t%s\t%c\t%08X\n", node->entry->location, node->entry->label, node->entry->section, node->entry->value != NULL ? node->entry->value : 0);
     fputs(buffer, fp);
 
     inorderS(node->right, fp, buffer, sizeOfBuffer);
@@ -174,12 +176,12 @@ void importSymbolTable()
     char *lbl = NULL;
     long hex;
     char sec;
+    long value = 0;
 
     while (fgets(buffer, 100, fp) != NULL)
     {
         char *token = strtok(buffer, "\t");
         hex = strtol(token, NULL, 16);
-
         token = strtok(NULL, "\t");
         if (lbl)
             free(lbl);
@@ -188,7 +190,7 @@ void importSymbolTable()
         token = strtok(NULL, "\t");
         sec = token[0];
 
-        addLabel(lbl, hex, sec);
+        addLabel(lbl, hex, sec, value); // TODO: Fix Value Import
     }
     // displaySymbolTable();
 

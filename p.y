@@ -54,7 +54,7 @@ data_lines: data_line NEWLINE {newline();} data_lines
 	| NEWLINE {newline();} data_lines
 	|
 	;
-data_line: LABEL  D_TYPE {printLocation(locd); size = $2; addLabel($1,locd,'d');}values
+data_line: LABEL  D_TYPE {printLocation(locd); size = $2; addLabel($1,locd,'d',NULL);}values
 	; 
 
 values: val
@@ -71,7 +71,7 @@ bss_lines: bss_line NEWLINE {newline();} bss_lines
 	|
 	;
 
-bss_line: LABEL B_TYPE VALUE {printLocation(locb);printf("<res %lXh>",$2 * $3); addLabel($1,locb,'b'); locb += ( $2 * $3);}
+bss_line: LABEL B_TYPE VALUE {printLocation(locb);printf("<res %lXh>",$2 * $3); addLabel($1,locb,'b',$2 * $3); locb += ( $2 * $3);}
 	;
 
 
@@ -81,7 +81,7 @@ text_lines: text_line NEWLINE {newline();} text_lines
 	;
 
 text_line: GLOBAL LABEL
-	| LABEL {addLabel($1,loct,'t');} instg
+	| LABEL {addLabel($1,loct,'t',NULL);} instg
 	| instg
 	;
 

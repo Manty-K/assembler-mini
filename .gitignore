@@ -8,3 +8,4 @@ lex.yy.c
 *.png
 *.sym
 *.bin
+*.tmp
