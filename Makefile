@@ -1,10 +1,13 @@
+maker.o: maker.c
+	gcc maker.c -o maker.o
+
 SRC = t.s
 OBJ = $(SRC:.s=.o)
 LST = $(SRC:.s=.lst)
 SYM = $(SRC:.s=.sym)
 
 p: p.o objgen.o
-	./p.o 1 < $(SRC) > /dev/null && ./p.o 2 < $(SRC) > output.lst && bash -c 'paste output.lst <(sed "s/^/\t\t\t/" $(SRC)) -d " " | nl '
+	./p.o 1 < $(SRC) > /dev/null && ./p.o 2 < $(SRC) > output.lst # && bash -c 'paste output.lst <(sed "s/^/\t\t\t/" $(SRC)) -d " " | nl '
 	awk '/SECTION TEXT/ {found=1} found' output.lst | sed '1d' | cut -f2 -d ' '|tr -d '[,' |tr -d '],' > textsection.tmp
 	awk '/SECTION DATA/ {found=1} found' output.lst | sed '1d' | awk '/SECTION/ {exit} {print}' | cut -f2 -d ' '> datasection.tmp
 	cp p.sym $(SYM)
@@ -20,7 +23,7 @@ p: p.o objgen.o
 	cat symb.bin >> output.o
 	cat symlbl.tmp >> output.o
 	cp output.o $(OBJ)
-	xxd $(OBJ)
+	# xxd $(OBJ)
  
 p.o: lex.yy.c p.tab.c utils.c symb.c modrm.c
 	gcc p.tab.c lex.yy.c utils.c symb.c modrm.c -lfl -o p.o -Wall
