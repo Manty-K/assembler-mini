@@ -38,21 +38,6 @@ void makeeverything(char *file)
     system("cat textsection.bin >> output.o");
     system("cat symb.bin >> output.o");
     system("cat symlbl.tmp >> output.o");
-
-    /*
-    cp p.sym $(SYM)
-    cut -f 3 p.sym  | sed 's/b/02/g' | sed 's/d/01/g'| sed 's/t/03/g' > nums.tmp
-    paste nums.tmp p.sym | cut -f 1,2,5| tr -d '\t' > symb.tmp
-    cut -f 2 p.sym | sed 's/$$/./g' > symlbl.tmp
-    ./objgen.o textsection.tmp textsection.bin
-    ./objgen.o datasection.tmp datasection.bin
-    ./objgen.o symb.tmp symb.bin
-
-    cat datasection.bin >> output.o
-    cat textsection.bin >> output.o
-    cat symb.bin >> output.o
-    cat symlbl.tmp >> output.o
-    */
 }
 
 int main(int argc, char const *argv[])
@@ -92,36 +77,43 @@ int main(int argc, char const *argv[])
         {
             option = 0; // Object File
         }
-        else if (!strcmp("--save-temps", argv[2]))
+        else if (!strcmp("-D", argv[2]))
         {
-            option = 3; // Save Temporary Files
+            option = 3; // Show Data setion
+        }
+        else if (!strcmp("-T", argv[2]) || !strcmp("-t", argv[2]))
+        {
+            option = 4; // Show Data setion
         }
         else
         {
-            puts("Invalid Argument %s. Use -s,-l, -o or --save-temps");
+            puts("Invalid Argument %s. Use \n-s\n-l\n-o\n-t\n-d");
             exit(1);
         }
+    }
 
-        switch (option)
-        {
-        case 0: // Object Code
-            system("cat output.o");
+    switch (option)
+    {
+    case 0: // Object Code
+        system("cat output.o");
+        break;
+    case 1: // Symbol Table
+        system("cat p.sym");
+        break;
+    case 2: // Listing File
+        system("cat output.lst");
+        break;
+    case 3: // Data Section
+        system("awk '/SECTION DATA/ {found=1} found' output.lst | sed '1d' | awk '/SECTION/ {exit} {print}' | grep .");
+        break;
+    case 4: // Text Section
+        system("awk '/SECTION TEXT/ {found=1} found' output.lst | sed '1d' | tr -d '[,' |tr -d '],'| grep .");
+        break;
 
-            break;
-        case 1: // Symbol Table
-            system("cat p.sym");
-            break;
-        case 2: // Listing File
-            system("cat output.lst");
-            break;
-        case 3: // Save Temporary Files
-            break;
-
-        default:
-            puts("Invalid option");
-            exit(1);
-            break;
-        }
+    default:
+        puts("Invalid option");
+        exit(1);
+        break;
     }
 
     return 0;
