@@ -22,6 +22,7 @@ void makeeverything(char *file)
     system("bison -d p.y --warnings=none");
     system("gcc objgen.c -o objgen.o");
     system("gcc p.tab.c lex.yy.c utils.c symb.c modrm.c -lfl -o p.o -w");
+
     bzero(command, sizeof(command));
     sprintf(command, "./p.o 1 < %s > /dev/null && ./p.o 2 < %s > output.lst", file, file);
     system(command);
@@ -57,14 +58,13 @@ int main(int argc, char const *argv[])
     char filename[256];
 
     strcpy(filename, argv[1]);
-    makeeverything(filename);
 
     int option = 0;
 
     if (argc > 2)
     {
 
-        if (!strcmp("-s", argv[2]))
+        if (!strcmp("-s", argv[2]) || !strcmp("-s", argv[2]))
         {
             option = 1; // Symbol Table
         }
@@ -77,7 +77,7 @@ int main(int argc, char const *argv[])
         {
             option = 0; // Object File
         }
-        else if (!strcmp("-D", argv[2]))
+        else if (!strcmp("-D", argv[2]) || !strcmp("-d", argv[2]))
         {
             option = 3; // Show Data setion
         }
@@ -85,12 +85,19 @@ int main(int argc, char const *argv[])
         {
             option = 4; // Show Data setion
         }
+        else if (!strcmp("-L", argv[2]))
+        {
+            option = 5; // Show LST file
+        }
         else
         {
-            puts("Invalid Argument %s. Use \n-s\n-l\n-o\n-t\n-d");
+            printf("Invalid Argument %s\n", argv[2]);
+            puts("Valid Argumants:\n-o: Object Code (Default)\n-s,-S: Symbol Table\n-d,-D Data Section\n-t,-T: Text Section");
+
             exit(1);
         }
     }
+    makeeverything(filename);
 
     switch (option)
     {
@@ -108,6 +115,13 @@ int main(int argc, char const *argv[])
         break;
     case 4: // Text Section
         system("awk '/SECTION TEXT/ {found=1} found' output.lst | sed '1d' | tr -d '[,' |tr -d '],'| grep .");
+        break;
+    case 5: // List file advance
+        char command[300];
+        memset(command, 0, sizeof(command));
+        sprintf(command, "paste output.lst %s | nl", filename);
+        system(command);
+
         break;
 
     default:
